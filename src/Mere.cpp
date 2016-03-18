@@ -15,6 +15,7 @@
 //------------------------------------------------------ Include personnel
 #include "Menu.h"
 #include "Heure.h"
+#include "Outils.h"
 
 
 ///////////////////////////////////////////////////////////////////  PRIVE
@@ -39,7 +40,7 @@
 //---------------------------------------------------- Fonctions publiques
 int main ()
 {
-	InitialisationApplication(XTERM);
+	InitialiserApplication(XTERM);
 	sleep(10);
 	TerminerApplication();
 	return 0;

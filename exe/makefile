@@ -5,7 +5,7 @@ RMFLAGS  = -f
 OUTPUT   = -o
 CPPFLAGS = -Wall -std=c++11 #-DMAP
 INTPATH  = ../src/
-INT      = Menu.h Heure.h Outils.h GestionClavier.h 
+INT      = Menu.h Heure.h
 INTPATH  =../src/
 #REAL     = $(REALPATH)$(INT:.h=.cpp)
 REALPATH =../src/
