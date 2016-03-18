@@ -1,1 +1,4 @@
-ps : permet de voir les processus à un instant t.
+
+Commandes :
+ - ps permet de voir les processus à un instant t.
+ - ipcs

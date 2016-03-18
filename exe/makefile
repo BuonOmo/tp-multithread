@@ -4,29 +4,32 @@ RM       = rm
 RMFLAGS  = -f
 OUTPUT   = -o
 CPPFLAGS = -Wall -std=c++11 #-DMAP
-INTPATH  = ../src/
-INT      = Menu.h Heure.h Outils.h GestionClavier.h 
+INT      = Menu.h Heure.h Outils.h GestionClavier.h
 INTPATH  =../src/
-#REAL     = $(REALPATH)$(INT:.h=.cpp)
 REALPATH =../src/
-OBJ      = $(OBJPATH)$(INT:.h=.o) Mere.o
+REAL     = $(REALPATH)$(INT:.h=.cpp)
 OBJPATH  =
-LIBPATH  = #-L
+OBJ      = Mere.o #$(OBJPATH)$(INT:.h=.o)
+LIBPATH  = ../lib/
 INCPATH  = #-I
-LIBS     = #-lm
+LIBS     = libtp.a
 
 ECHO  = @echo
 EXE   = Heritage
 CLEAN = clean
 #.SILENT:
-.PHONY: $(CLEAN) tests
+.PHONY: $(CLEAN)
 
 $(EXE) : $(OBJ)
 	$(EDL) $(OUTPUT) $(EXE) $(OBJ)
 
 %.o : $(INTPATH)%.cpp
 	$(ECHO) "compilation de <$<>"
-	$(COMP) $(CPPFLAGS) $(INCPATH) -c $<
+	$(COMP) $(CPPFLAGS) $(INCPATH) $(LIBPATH)$(LIBS) -c $<
+
+Outils.o : Outils.h
+Heure.o : Heure.h
+Mere.o : Outils.h Heure.h
 
 clean :
 	$(ECHO) "Nettoyage du repertoire..."
