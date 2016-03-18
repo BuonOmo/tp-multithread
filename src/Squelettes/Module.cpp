@@ -1,18 +1,18 @@
 /*************************************************************************
-                           Mere  -  description
+                           ${filebase}  -  description
                              -------------------
-    début                : Mere
-    copyright            : (C) Mere par Pierre Bayle et Ulysse Buonomo
-    e-mail               : pbayle@insa-lyon.fr
+    début                : 18 mars 2016
+    copyright            : (C) ${filebase} par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Réalisation du module <Mere> (fichier Mere.cpp) -----
+//---------- Réalisation du module <${filebase}> (fichier ${filebase}.cpp) -----
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 
 //------------------------------------------------------ Include personnel
-#include "Mere.h"
+#include "${filebase}.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
@@ -39,4 +39,3 @@ type Nom ( liste de paramètres )
 //
 {
 } //----- fin de Nom
-

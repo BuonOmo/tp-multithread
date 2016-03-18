@@ -1,88 +1,35 @@
 /*************************************************************************
-                           GestionClavier  -  Gère les entrées clavier
+                           GestionClavier  -  description
                              -------------------
-    début                : 18/3/2016
-    copyright            : (C) 2016 par Pierre et Ulysse
+    début                : 18 mars 2016
+    copyright            : (C) GestionClavier par Pierre Bayle et Ulysse
+                                                                 Buonomo
+    e-mail               :  pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//-------------- Interface de la classe <GestionClavier> (fichier GestionClavier) --------------
+//----- Interface du module <GestionClavier> (fichier GestionClavier.h) --
 #ifndef GESTIONCLAVIER_H
 #define GESTIONCLAVIER_H
 
+//------------------------------------------------------------------------
+// Rôle du module <GestionClavier>
+//
+//
+//------------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
 
-//------------------------------------------------------------------------
-// Rôle de la classe <GestionClavier>
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+// type Nom ( liste de paramètres );
+// Mode d'emploi :
 //
+// Contrat :
 //
-//------------------------------------------------------------------------
-
-class GestionClavier
-{
-//----------------------------------------------------------------- PUBLIC
-
-public:
-//----------------------------------------------------- Méthodes publiques
-    void SimulationClavier ();
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-
-//------------------------------------------------- Surcharge d'opérateurs
-    GestionClavier & operator = ( const GestionClavier & aGestionClavier );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-
-//-------------------------------------------- Constructeurs - destructeur
-    GestionClavier ( const GestionClavier & aGestionClavier );
-    // Mode d'emploi (constructeur de copie) :
-    //
-    // Contrat :
-    //
-
-    GestionClavier (  );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    virtual ~GestionClavier ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-//------------------------------------------------------------------ PRIVE
-
-protected:
-//----------------------------------------------------- Méthodes protégées
-
-private:
-//------------------------------------------------------- Méthodes privées
-
-protected:
-//----------------------------------------------------- Attributs protégés
-
-private:
-//------------------------------------------------------- Attributs privés
-
-//---------------------------------------------------------- Classes amies
-
-//-------------------------------------------------------- Classes privées
-
-//----------------------------------------------------------- Types privés
-
-};
-
-//----------------------------------------- Types dépendants de <GestionClavier>
 
 #endif // GESTIONCLAVIER_H

@@ -1,9 +1,10 @@
 /*************************************************************************
-                           XXX  -  description
+                           GestionClavier  -  description
                              -------------------
-    début                : XXX
-    copyright            : (C) XXX par XXX
-    e-mail               : XXX
+    début                : 18 mars 2016
+    copyright            : (C) GestionClavier par Pierre Bayle et Ulysse
+                                                                 Buonomo
+    e-mail               :  pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
 //---------- Interface du module <XXX> (fichier XXX.h) ---------
@@ -32,4 +33,3 @@
 //
 
 #endif // XXX_H
-
