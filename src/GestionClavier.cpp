@@ -1,91 +1,80 @@
 /*************************************************************************
-                           GestionClavier  -  Gère les entrées clavier
+                           GestionClavier  -  description
                              -------------------
-    début                : 18/3/2016
-    copyright            : (C) 2016 par Pierre et Ulysse
+    début                : GestionClavier
+    copyright            : (C) GestionClavier par Pierre Bayle et
+                               Ulysse Buonomo
+    e-mail               : pbayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Réalisation de la classe <GestionClavier> (fichier GestionClavier) --
+//-- Réalisation du module <GestionClavier> (fichier GestionClavier.cpp) -
 
-//---------------------------------------------------------------- INCLUDE
-
+/////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
-using namespace std;
-#include <iostream>
 
 //------------------------------------------------------ Include personnel
 #include "GestionClavier.h"
-
+#include "Menu.h"
+///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
-//---------------------------------------------------- Variables de classe
+//------------------------------------------------------------------ Types
 
-//----------------------------------------------------------- Types privés
+//---------------------------------------------------- Variables statiques
 
+//------------------------------------------------------ Fonctions privées
+//static type nom ( liste de paramètres )
+// Mode d'emploi :
+//
+// Contrat :
+//
+// Algorithme :
+//
+//{
+//} //----- fin de nom
 
-//----------------------------------------------------------------- PUBLIC
-//-------------------------------------------------------- Fonctions amies
-
-//----------------------------------------------------- Méthodes publiques
-void GestionClavier::SimulationClavier ()
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+type Nom ( liste de paramètres )
 // Algorithme :
 //
 {
-	for(;;)
-	{
-		Menu();
-	}
-} //----- Fin de Méthode
+} //----- fin de Nom
 
-
-//------------------------------------------------- Surcharge d'opérateurs
-GestionClavier & GestionClavier::operator = ( const GestionClavier & aGestionClavier )
-// Algorithme :
-//
+void SimulationClavier ( )
 {
-    if (this != &aGestionClavier)
+#ifdef MAP
+    cout << "Appel à la méthode SimulationClavier" << endl;
+#endif
+    for ( ; ; )
     {
-        
+        Menu ( );
     }
-    return *this;
-} //----- Fin de operator =
+} //----- Fin de SimulationClavier
 
-
-//-------------------------------------------- Constructeurs - destructeur
-GestionClavier::GestionClavier ( const GestionClavier & aGestionClavier )
-// Algorithme :
-//
+void Commande ( char code, unsigned int valeur )
 {
-#ifdef MAP
-    cout << "Appel au constructeur de copie de <GestionClavier>" << endl;
-#endif
-    *this = aGestionClavier;
-} //----- Fin de GestionClavier (constructeur de copie)
-
-
-GestionClavier::GestionClavier (  )
-    : ;
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au constructeur de <GestionClavier>" << endl;
-#endif
-} //----- Fin de GestionClavier
-
-
-GestionClavier::~GestionClavier ( )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au destructeur de <GestionClavier>" << endl;
-#endif
-} //----- Fin de ~GestionClavier
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-
-//------------------------------------------------------- Méthodes privées
+    switch (code) {
+        case 'E': // EXIT
+            /* quitter l’appli :
+             *  - envoyer SIGCHILD à mere
+             *  - se tuer
+             */
+            break;
+        case 'P': // PROF
+            /*  - ajouter une voiture à la file d’attente PE
+             * 
+             */
+            break;
+        case 'A': // AUTRE
+            /*   - ajouter une voiture à la file d’attente PE
+             *
+             */
+            break;
+        case 'S': // SORTIE
+              /* - ajouter une voiture à la file d’attente PS
+               *
+               */
+            break;
+    }
+}

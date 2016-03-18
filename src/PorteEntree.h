@@ -1,17 +1,17 @@
 /*************************************************************************
-                           ${filebase}  -  description
+                           PorteEntree  -  description
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) ${filebase} par Pierre Bayle et Ulysse Buonomo
+    copyright            : (C) PorteEntree par Pierre Bayle et Ulysse Buonomo
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Interface de la tâche <XXX> (fichier XXX.h) -------
-#if ! defined ( XXX_H )
-#define XXX_H
+//---------- Interface de la tâche <PorteEntree> (fichier PorteEntree.h) -------
+#ifndef PORTE_ENTREE_H
+#define PORTE_ENTREE_H
 
 //------------------------------------------------------------------------
-// Rôle de la tâche <XXX>
+// Rôle de la tâche <PorteEntree>
 //
 //
 //------------------------------------------------------------------------
@@ -31,4 +31,4 @@
 // Contrat :
 //
 
-#endif // XXX_H
+#endif // PORTE_ENTREE_H

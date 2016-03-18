@@ -1,9 +1,9 @@
 /*************************************************************************
-                           XXX  -  description
+                           ${filebase}  -  description
                              -------------------
-    début                : XXX
-    copyright            : (C) XXX par XXX
-    e-mail               : XXX
+    début                : 18 mars 2016
+    copyright            : (C) ${filebase} par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
 //---------- Réalisation de la tâche <XXX> (fichier XXX.cpp) ---
@@ -39,4 +39,3 @@ type Nom ( liste de paramètres )
 //
 {
 } //----- fin de Nom
-
