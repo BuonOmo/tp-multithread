@@ -17,7 +17,6 @@
 #include "Heure.h"
 #include "Outils.h"
 
-
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -77,5 +76,5 @@ int main ()
 	sleep(10);
 	TerminerApplication();
 	return 0;
-	
+
 }
