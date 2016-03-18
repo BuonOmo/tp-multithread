@@ -27,7 +27,7 @@ class GestionClavier
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    // type Méthode ( liste de paramètres );
+    void SimulationClavier ();
     // Mode d'emploi :
     //
     // Contrat :

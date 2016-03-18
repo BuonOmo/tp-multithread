@@ -27,11 +27,15 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Méthodes publiques
-// type GestionClavier::Méthode ( liste de paramètres )
+void GestionClavier::SimulationClavier ()
 // Algorithme :
 //
-//{
-//} //----- Fin de Méthode
+{
+	for(;;)
+	{
+		Menu();
+	}
+} //----- Fin de Méthode
 
 
 //------------------------------------------------- Surcharge d'opérateurs

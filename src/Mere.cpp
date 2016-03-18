@@ -40,6 +40,39 @@
 //---------------------------------------------------- Fonctions publiques
 int main ()
 {
+	pid_t nofils;
+	pid_t noE1;
+	pid_t noE2;
+	pid_t noE3;
+	pid_t noS;
+	
+	if((nofils = fork()) == 0)
+	{
+		SimulationClavier();
+	}
+	else if((noE1 = fork()) == 0)
+	{
+		BarriereEntree();
+	}
+	else if((noE2 = fork()) == 0)
+	{
+		BarriereEntree();
+	}
+	else if((noE3 = fork()) == 0)
+	{
+		BarriereEntree();
+	}
+	else if((noS = fork()) == 0)
+	{
+		BarriereSortie();
+	}
+	else
+	{
+		InitialiserApplication(XTERM);
+		sleep(10);
+		TerminerApplication();
+	}
+	
 	InitialiserApplication(XTERM);
 	sleep(10);
 	TerminerApplication();
