@@ -39,7 +39,7 @@
 //---------------------------------------------------- Fonctions publiques
 int main ()
 {
-	InitialisationApplication(XTERM);
+	InitialiserApplication(XTERM);
 	sleep(10);
 	TerminerApplication();
 	return 0;
