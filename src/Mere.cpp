@@ -1,87 +1,47 @@
 /*************************************************************************
-                           Mere  -  tache principale
+                           Mere  -  description
                              -------------------
-    début                : 18/3/2016
-    copyright            : (C) 2016 par Pierre et Ulysse
+    début                : Mere
+    copyright            : (C) Mere par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pbayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Réalisation de la classe <Mere> (fichier Mere) --
+//---------- Réalisation du module <Mere> (fichier Mere.cpp) -----
 
-//---------------------------------------------------------------- INCLUDE
-
+/////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
-using namespace std;
-#include <iostream>
+#include <unistd.h>
 
 //------------------------------------------------------ Include personnel
-#include "Mere.h"
+#include "Menu.h"
+#include "Heure.h"
 
+
+///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
-//---------------------------------------------------- Variables de classe
+//------------------------------------------------------------------ Types
 
-//----------------------------------------------------------- Types privés
+//---------------------------------------------------- Variables statiques
 
-
-//----------------------------------------------------------------- PUBLIC
-//-------------------------------------------------------- Fonctions amies
-
-//----------------------------------------------------- Méthodes publiques
-// type Mere::Méthode ( liste de paramètres )
+//------------------------------------------------------ Fonctions privées
+//static type nom ( liste de paramètres )
+// Mode d'emploi :
+//
+// Contrat :
+//
 // Algorithme :
 //
 //{
-//} //----- Fin de Méthode
+//} //----- fin de nom
 
-
-//------------------------------------------------- Surcharge d'opérateurs
-Mere & Mere::operator = ( const Mere & aMere )
-// Algorithme :
-//
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+int main ()
 {
-    if (this != &aMere)
-    {
-        
-    }
-    return *this;
-} //----- Fin de operator =
-
-
-//-------------------------------------------- Constructeurs - destructeur
-Mere::Mere ( const Mere & aMere )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au constructeur de copie de <Mere>" << endl;
-#endif
-    *this = aMere;
-} //----- Fin de Mere (constructeur de copie)
-
-
-Mere::Mere (  )
-    : ;
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au constructeur de <Mere>" << endl;
-#endif
-} //----- Fin de Mere
-
-
-Mere::~Mere ( )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au destructeur de <Mere>" << endl;
-#endif
-} //----- Fin de ~Mere
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-
-//------------------------------------------------------- Méthodes privées
+	InitialisationApplication(XTERM);
+	sleep(10);
+	TerminerApplication();
+	return 0;
+	
+}

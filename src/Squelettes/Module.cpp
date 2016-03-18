@@ -1,18 +1,18 @@
 /*************************************************************************
-                           XXX  -  description
+                           Mere  -  description
                              -------------------
-    début                : XXX
-    copyright            : (C) XXX par XXX
-    e-mail               : XXX
+    début                : Mere
+    copyright            : (C) Mere par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pbayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Réalisation du module <XXX> (fichier XXX.cpp) -----
+//---------- Réalisation du module <Mere> (fichier Mere.cpp) -----
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 
 //------------------------------------------------------ Include personnel
-#include "XXX.h"
+#include "Mere.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
