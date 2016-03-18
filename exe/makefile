@@ -6,8 +6,16 @@ OUTPUT   = -o
 CPPFLAGS = -Wall -std=c++11 #-DMAP
 INT      =
 INTPATH  = ../src/
+<<<<<<< HEAD
 REALPATH = ../src/
 REAL     = Mere.cpp #$(REALPATH)$(INT:.h=.cpp)
+=======
+INT      = Menu.h Heure.h
+INTPATH  =../src/
+#REAL     = $(REALPATH)$(INT:.h=.cpp)
+REALPATH =../src/
+OBJ      = $(OBJPATH)$(INT:.h=.o) Mere.o
+>>>>>>> 1bd3e387c347d0c2d13f89ab88c70dbac2952a06
 OBJPATH  =
 OBJ      = Mere.o #$(OBJPATH)$(INT:.h=.o)
 LIBPATH  =
