@@ -14,7 +14,7 @@
 
 //------------------------------------------------------ Include personnel
 #include "GestionClavier.h"
-
+#include "Menu.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -40,3 +40,41 @@ type Nom ( liste de paramètres )
 //
 {
 } //----- fin de Nom
+
+void SimulationClavier ( )
+{
+#ifdef MAP
+    cout << "Appel à la méthode SimulationClavier" << endl;
+#endif
+    for ( ; ; )
+    {
+        Menu ( );
+    }
+} //----- Fin de SimulationClavier
+
+void Commande ( char code, unsigned int valeur )
+{
+    switch (code) {
+        case 'E': // EXIT
+            /* quitter l’appli :
+             *  - envoyer SIGCHILD à mere
+             *  - se tuer
+             */
+            break;
+        case 'P': // PROF
+            /*  - ajouter une voiture à la file d’attente PE
+             * 
+             */
+            break;
+        case 'A': // AUTRE
+            /*   - ajouter une voiture à la file d’attente PE
+             *
+             */
+            break;
+        case 'S': // SORTIE
+              /* - ajouter une voiture à la file d’attente PS
+               *
+               */
+            break;
+    }
+}
