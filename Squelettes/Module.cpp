@@ -1,19 +1,18 @@
 /*************************************************************************
-                PorteEntree  -  gestion des portes d’entrée
+                           ${filebase}  -  description
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) PorteEntree par Pierre Bayle et Ulysse
-                                                              Buonomo
+    copyright            : (C) ${filebase} par Pierre Bayle et Ulysse Buonomo
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//----- Réalisation de la tâche <PorteEntree> (fichier PorteEntree.cpp) --
+//---------- Réalisation du module <${filebase}> (fichier ${filebase}.cpp) -----
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 
 //------------------------------------------------------ Include personnel
-#include "PorteEntree.h"
+#include "${filebase}.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes

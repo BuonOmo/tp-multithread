@@ -1,17 +1,17 @@
 /*************************************************************************
-                           PorteEntree  -  description
+                           Donnees  -  description
                              -------------------
-    début                : 18 mars 2016
-    copyright            : (C) PorteEntree par Pierre Bayle et Ulysse Buonomo
+    début                : 21 mars 2016
+    copyright            : (C) Mere par Pierre Bayle et Ulysse Buonomo
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Interface de la tâche <PorteEntree> (fichier PorteEntree.h) -------
-#ifndef PORTE_ENTREE_H
-#define PORTE_ENTREE_H
+//---------- Interface de la tâche <Donnees> (fichier Donnees.h) -------
+#ifndef DONNEES_H
+#define DONNEES_H
 
 //------------------------------------------------------------------------
-// Rôle de la tâche <PorteEntree>
+// Rôle de la tâche <Donnees>
 //
 //
 //------------------------------------------------------------------------
@@ -24,11 +24,25 @@
 //------------------------------------------------------------------ Types
 
 //////////////////////////////////////////////////////////////////  PUBLIC
-//---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
-// Mode d'emploi :
-//
-// Contrat :
-//
 
-#endif // PORTE_ENTREE_H
+struct Requete {
+	TypeBarriere barriere;
+	TypeUsager usager; 
+};
+
+typedef struct Requete Requete;
+
+struct Etat {
+	TypeUsager usagerEtat;
+	int numPlace;
+	time_t hArrivee;
+}
+
+typedef struct Etat Etat;
+
+// Nombre maximal de requêtes possibles pour l'application
+const int MAX_REQUETES = 999;
+//---------------------------------------------------- Fonctions publiques
+
+
+#endif // MERE_H

@@ -1,88 +1,46 @@
 /*************************************************************************
-                           Mere  -  tache principale
+                           Mere  -  description
                              -------------------
-    début                : 18/3/2016
-    copyright            : (C) 2016 par Pierre et Ulysse
+    début                : 18 mars 2016
+    copyright            : (C) Mere par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//-------------- Interface de la classe <Mere> (fichier Mere) --------------
+//---------- Interface de la tâche <Mere> (fichier Mere.h) -------
 #ifndef MERE_H
 #define MERE_H
 
+//------------------------------------------------------------------------
+// Rôle de la tâche <Mere>
+//
+//
+//------------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
 
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
-
-//------------------------------------------------------------------------
-// Rôle de la classe <Mere>
+ 
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+void Initialisation ();
+// Mode d'emploi :
 //
+// Contrat :
 //
-//------------------------------------------------------------------------
 
-class Mere
-{
-//----------------------------------------------------------------- PUBLIC
+void Moteur ();
+// Mode d'emploi :
+//
+// Contrat :
+//
 
-public:
-//----------------------------------------------------- Méthodes publiques
-    // type Méthode ( liste de paramètres );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-
-//------------------------------------------------- Surcharge d'opérateurs
-    Mere & operator = ( const Mere & aMere );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-
-//-------------------------------------------- Constructeurs - destructeur
-    Mere ( const Mere & aMere );
-    // Mode d'emploi (constructeur de copie) :
-    //
-    // Contrat :
-    //
-
-    Mere (  );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    virtual ~Mere ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-//------------------------------------------------------------------ PRIVE
-
-protected:
-//----------------------------------------------------- Méthodes protégées
-
-private:
-//------------------------------------------------------- Méthodes privées
-
-protected:
-//----------------------------------------------------- Attributs protégés
-
-private:
-//------------------------------------------------------- Attributs privés
-
-//---------------------------------------------------------- Classes amies
-
-//-------------------------------------------------------- Classes privées
-
-//----------------------------------------------------------- Types privés
-
-};
-
-//----------------------------------------- Types dépendants de <Mere>
+void Destruction ();
+// Mode d'emploi :
+//
+// Contrat :
+//
 
 #endif // MERE_H

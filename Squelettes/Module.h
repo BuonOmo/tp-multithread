@@ -1,17 +1,18 @@
 /*************************************************************************
-                           PorteEntree  -  description
+                           GestionClavier  -  description
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) PorteEntree par Pierre Bayle et Ulysse Buonomo
-    e-mail               : pierre.bayle@insa-lyon.fr
+    copyright            : (C) GestionClavier par Pierre Bayle et Ulysse
+                                                                 Buonomo
+    e-mail               :  pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Interface de la tâche <PorteEntree> (fichier PorteEntree.h) -------
-#ifndef PORTE_ENTREE_H
-#define PORTE_ENTREE_H
+//---------- Interface du module <XXX> (fichier XXX.h) ---------
+#if ! defined ( XXX_H )
+#define XXX_H
 
 //------------------------------------------------------------------------
-// Rôle de la tâche <PorteEntree>
+// Rôle du module <XXX>
 //
 //
 //------------------------------------------------------------------------
@@ -31,4 +32,4 @@
 // Contrat :
 //
 
-#endif // PORTE_ENTREE_H
+#endif // XXX_H
