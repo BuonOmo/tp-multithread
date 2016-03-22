@@ -15,6 +15,15 @@
 //------------------------------------------------------ Include personnel
 #include "GestionClavier.h"
 #include "Menu.h"
+#include <unistd.h>
+#include <iostream>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/msg.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -35,17 +44,25 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-type Nom ( liste de paramètres )
-// Algorithme :
-//
+
+static void SignalDestruction (int noSig)
 {
-} //----- fin de Nom
+	if(noSig == SIGUSR2)
+	{
+		exit(0);
+	}
+}
 
 void SimulationClavier ( )
 {
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
+	struct sigaction action1;
+	action1.sa_handler = SignalDestruction;
+	sigemptyset(&action1.sa_mask);
+	action1.sa_flags = 0;
+	sigaction(SIGUSR2, &action1, NULL);
     for ( ; ; )
     {
         Menu ( );
@@ -60,6 +77,8 @@ void Commande ( char code, unsigned int valeur )
              *  - envoyer SIGCHILD à mere
              *  - se tuer
              */
+             kill(getppid(), SIGUSR2);
+             waitpid(getppid(),NULL,0);
             break;
         case 'P': // PROF
             /*  - ajouter une voiture à la file d’attente PE

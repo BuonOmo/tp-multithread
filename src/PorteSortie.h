@@ -1,18 +1,17 @@
 /*************************************************************************
-                           GestionClavier  -  description
+                           PorteSortie  -  description
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) GestionClavier par Pierre Bayle et Ulysse
-                                                                 Buonomo
-    e-mail               :  pierre.bayle@insa-lyon.fr
+    copyright            : (C) PorteSortie par Pierre Bayle et Ulysse Buonomo
+    e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//----- Interface du module <GestionClavier> (fichier GestionClavier.h) --
-#ifndef GESTIONCLAVIER_H
-#define GESTIONCLAVIER_H
+//---------- Interface de la tâche <PorteSortie> (fichier PorteSortie.h) -------
+#ifndef PORTE_SORTIE_H
+#define PORTE_SORTIE_H
 
 //------------------------------------------------------------------------
-// Rôle du module <GestionClavier>
+// Rôle de la tâche <PorteSortie>
 //
 //
 //------------------------------------------------------------------------
@@ -26,7 +25,10 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void SimulationClavier();
+// type Nom ( liste de paramètres );
+// Mode d'emploi :
+//
+// Contrat :
 //
 
-#endif // GESTIONCLAVIER_H
+#endif // PORTE_SORTIE_H

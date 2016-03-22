@@ -36,7 +36,7 @@ struct Etat {
 	TypeUsager usagerEtat;
 	int numPlace;
 	time_t hArrivee;
-}
+};
 
 typedef struct Etat Etat;
 
