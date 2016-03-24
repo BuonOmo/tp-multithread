@@ -115,14 +115,14 @@ void Initialisation ()
 	{
 		cout << "Erreur pour MP nbPlace" << endl;
 	}	
-	if ((mpEtat = shmget(cle,sizeof(Etat)*NB_PLACES, 0666|IPC_CREAT)) == -1)
+	if ((mpEtat = shmget(cle,sizeof(Etat), 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour MP Etat" << endl;
-	}	
+	}/*	
 	if ((mpRequete = shmget(cle,sizeof(Requete)*MAX_REQUETES, 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour MP Requete" << endl;
-	}
+	}*/
 	/** Fin création des MP **/
 	
 	/** Création des sémaphores **/
@@ -176,16 +176,13 @@ void Initialisation ()
 	}*/
 	else
 	{
-		cout << "Je suis le père" << endl;
 	}
 }
 
 void Moteur ()
 {
 	
-	for(;;){
-		
-	}
+	for(;;){}
 	
 }
 
@@ -222,6 +219,7 @@ void Destruction ()
 	/** Destruction sémaphore **/
 	semctl (semGene, 0, IPC_RMID, 0);
 	/** Fin destruction sémaphore **/
+	TerminerApplication();
 }
 
 int main ()
@@ -235,10 +233,7 @@ int main ()
 	/** Fin handler **/
 	InitialiserApplication(XTERM);
 	Initialisation();
-	Moteur();
-	Destruction();
-	TerminerApplication();
-	
+	Moteur();	
 	return 0;
 
 }
