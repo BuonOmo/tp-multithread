@@ -25,9 +25,9 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
+void PorteSortie(int pmemIDNbPlace , int pmemIDEtat, int pmemIDRequete, int pbalID, int psemID);
 // Mode d'emploi :
-//
+//	Processus fils sortie.
 // Contrat :
 //
 

@@ -83,73 +83,100 @@ static void SignalDestruction (int noSig)
 
 void Initialisation ()
 {
-	/*
-	key_t cleEntreeBPP = ftok("balBPP",1);
-	key_t cleEntreeBPA = ftok("balBPA",1);
-	key_t cleEntreeGB = ftok("balGB",1); 
-	key_t cleSortie = ftok("balS",1);*/
-	
-	key_t cle = ftok("parking",1);
+	/** Création des clefs pour les IPC **/
+	key_t cleBalEntreeBPP = ftok(CHEMIN,1);
+	key_t cleBalEntreeBPA = ftok(CHEMIN,2);
+	key_t cleBalEntreeGB  = ftok(CHEMIN,3);
+	key_t cleBalSortie 	  = ftok(CHEMIN,4);
+	key_t cleMPNbPlace 	  = ftok(CHEMIN,5);
+	key_t cleMPEtat 	  = ftok(CHEMIN,6);
+	key_t cleMPRequete 	  = ftok(CHEMIN,7); 
+	key_t cleSem 		  = ftok(CHEMIN,8);
+	/** Fin création des clefs pour les IPC **/
 	
 	/** Création des BaL **/
-	if ((baLEntreeBPP = msgget(cle, 0666|IPC_CREAT)) == -1)
+	if ((baLEntreeBPP = msgget(cleBalEntreeBPP, 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour l'entrée BPP (BAL)" << endl;
 	}	
-	if ((baLEntreeBPA = msgget(cle, 0666|IPC_CREAT)) == -1)
+	if ((baLEntreeBPA = msgget(cleBalEntreeBPA, 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour l'entrée BPA (BAL)" << endl;
 	}	
-	if ((baLEntreeGB = msgget(cle, 0666|IPC_CREAT)) == -1)
+	if ((baLEntreeGB = msgget(cleBalEntreeGB, 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour l'entrée GB (BAL)" << endl;
 	}
-	if ((baLSortie = msgget(cle, 0666|IPC_CREAT)) == -1)
+	if ((baLSortie = msgget(cleBalSortie, 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour l'entrée Sortie (BAL)" << endl;
 	}
 	/** Fin création des BaL **/
+
+
 	
 	/** Création des MP **/
-	if ((mpNbPlace = shmget(cle,sizeof(unsigned int), 0666|IPC_CREAT)) == -1)
+
+	//Initialisation de la memoire partagee NbPlaceOccupees
+	if ((mpNbPlace = shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour MP nbPlace" << endl;
-	}	
-	if ((mpEtat = shmget(cle,sizeof(Etat), 0666|IPC_CREAT)) == -1)
+	}
+	else
+	{
+		NbPlaceOccupees *nbo = (NbPlaceOccupees *) shmat(mpNbPlace, NULL, 0);
+		nbo->nb = 0;
+		shmdt(nbo);		
+	}
+
+
+	//Initialisation de la memoire partagee Etat
+	if ((mpEtat = shmget(cleMPEtat,sizeof(Etat), 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour MP Etat" << endl;
-	}/*	
-	if ((mpRequete = shmget(cle,sizeof(Requete)*MAX_REQUETES, 0666|IPC_CREAT)) == -1)
+	}
+	else
+	{
+		Etat *et = (Etat *) shmat(mpEtat, NULL, 0);
+		for(unsigned int i=0; i < NB_PLACES ; i++)
+		{
+			et->places[i] = {AUCUN, 0,0};
+		}
+		shmdt(et);
+	}
+	
+	//Initialisation de la memoire partagee Requete
+	if ((mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT)) == -1)
 	{
 		cout << "Erreur pour MP Requete" << endl;
-	}*/
+	}
+	else
+	{
+		Requete *req = (Requete *) shmat(mpRequete, NULL, 0);
+		for(unsigned int i=0; i < NB_BARRIERES_ENTREE; i++)
+		{
+			req->requetes[i] = {AUCUN, 0,0};
+		}
+		shmdt(req);
+	}
 	/** Fin création des MP **/
+
+
 	
 	/** Création des sémaphores **/
-	if ((semGene = semget(cle,6,0666|IPC_CREAT)) == -1)
+	if ((semGene = semget(cleSem,NB_SEM,0666|IPC_CREAT)) == -1)
 	{
 			cout << "Erreur de création de sémaphore" << endl;
 	}
-	/*if ((semEntreeBPA = semget(cle,,IPC_CREAT)) == -1)
+	else
 	{
-			cout << "Erreur de création de sémaphore (Entree BPA)" << endl;
+		semctl(semGene,SynchroPorteBPPROF,SETVAL,0);
+		semctl(semGene,SynchroPorteBPAUTRE,SETVAL,0);
+		semctl(semGene,SynchroPorteGB,SETVAL,0);
+		semctl(semGene,MutexMPNbPlaces,SETVAL,1);
+		semctl(semGene,MutexMPEtat,SETVAL,1);
+		semctl(semGene,MutexMPRequetes,SETVAL,1);
 	}
-	if ((semEntreeGB = semget(cle,,IPC_CREAT)) == -1)
-	{
-			cout << "Erreur de création de sémaphore (Entree GB)" << endl;
-	}
-	if ((semMPNbPlace = semget(cle,,IPC_CREAT)) == -1)
-	{
-			cout << "Erreur de création de sémaphore (MPNbPLaces)" << endl;
-	}
-	if ((semMPEtat = semget(cle,,IPC_CREAT)) == -1)
-	{
-			cout << "Erreur de création de sémaphore (MPEtat)" << endl;
-	}
-	if ((semMPRequete = semget(cle,,IPC_CREAT)) == -1)
-	{
-			cout << "Erreur de création de sémaphore (MPRequete)" << endl;
-	}*/
 	/** Fin création des sémaphores **/
 	
 	heure = ActiverHeure();
@@ -158,7 +185,7 @@ void Initialisation ()
 	{
 		SimulationClavier();
 	}
-	/*else if ((entreeBPP = fork()) == 0)
+	else if ((entreeBPP = fork()) == 0)
 	{
 		
 	}
@@ -172,8 +199,8 @@ void Initialisation ()
 	}
 	else if ((sortie = fork()) == 0)
 	{
-		
-	}*/
+		PorteSortie(mpNbPlace,mpEtat,mpRequete,baLSortie,semGene);
+	}
 	else
 	{
 	}

@@ -30,7 +30,7 @@
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
-
+static int balSortie;
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
 // Mode d'emploi :
@@ -53,16 +53,25 @@ static void SignalDestruction (int noSig)
 	}
 }
 
+static void InitialisationClavier()
+
+{
+    struct sigaction action1;
+    action1.sa_handler = SignalDestruction;
+    sigemptyset(&action1.sa_mask);
+    action1.sa_flags = 0;
+    sigaction(SIGUSR2, &action1, NULL);
+
+    balSortie = msgget(CLE,IPC_CREAT); // Récupération de la boîte au lettre pour la porteSOrtie
+
+}
+
 void SimulationClavier ( )
 {
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
-	struct sigaction action1;
-	action1.sa_handler = SignalDestruction;
-	sigemptyset(&action1.sa_mask);
-	action1.sa_flags = 0;
-	sigaction(SIGUSR2, &action1, NULL);
+	InitialisationClavier();
     for ( ; ; )
     {
         Menu ( );
@@ -94,6 +103,7 @@ void Commande ( char code, unsigned int valeur )
               /* - ajouter une voiture à la file d’attente PS
                *
                */
+               msgsnd(balSortie,&valeur,sizeof(unsigned int)); // Ecriture du numéro de place choisit
             break;
     }
 }
