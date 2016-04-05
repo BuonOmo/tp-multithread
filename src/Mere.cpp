@@ -188,19 +188,19 @@ void Initialisation ()
 	}
 	else if ((entreeBPP = fork()) == 0)
 	{
-		
+		PorteEntree(baLEntreeBPP, semGene, mpNbPlace, mpEtat, mpRequete); 
 	}
 	else if ((entreeBPA = fork()) == 0)
 	{
-		
+		PorteEntree(baLEntreeBPA, semGene, mpNbPlace, mpEtat, mpRequete);
 	}
 	else if ((entreeGB = fork()) == 0)
 	{
-		
+		PorteEntree(baLEntreeGB, semGene, mpNbPlace, mpEtat, mpRequete);
 	}
 	else if ((sortie = fork()) == 0)
 	{
-		PorteSortie(mpNbPlace,mpEtat,mpRequete,baLSortie,semGene);
+		PorteSortie(mpNbPlace, mpEtat, mpRequete, baLSortie, semGene);
 	}
 	else
 	{

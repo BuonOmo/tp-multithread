@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
+void PorteEntree (int pbalID, int psemIDint pmemIDNbPlace , int pmemIDEtat, int pmemIDRequete, TypeBarriere barType);
 // Mode d'emploi :
 //
 // Contrat :

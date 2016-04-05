@@ -2,7 +2,7 @@
                            PorteSortie  -  description
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) PorteSortie par Pierre Bayle et Ulysse Buonomo
+    copyright            : (C) PorteSortie par Pierre Bayle
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 

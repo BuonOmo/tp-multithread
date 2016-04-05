@@ -2,8 +2,7 @@
                 PorteSortie  -  gestion des portes d’entrée
                              -------------------
     début                : 18 mars 2016
-    copyright            : (C) PorteSortie par Pierre Bayle et Ulysse
-                                                              Buonomo
+    copyright            : (C) PorteSortie par Pierre Bayle
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
@@ -218,7 +217,7 @@ static void ReceptionMortVoiturier(int noSignal)
 
 			semop(semGene,&libererRequete,1); //Liberation de la memoire
 
-			struct sembuf pOp = {prio-1,1,0};
+			struct sembuf pOp = {(short unsigned int)prio-1,1,0};
 			semop(semGene,&pOp,1); //On relache le bon semaphore de synchronisation (on choisit la bonne porte(1 BPprof, 2 BPAutre, 3GB))
 		}
 
@@ -241,34 +240,34 @@ void PorteSortie(int pmemIDNbPlace , int pmemIDEtat, int pmemIDRequete, int pbal
 	InitialisationPorteSortie();
 
 	for(;;){
-		int numeroPlace;
+		unsigned int numeroPlace;
 
 		//Lecture sur le canal du numero de la place
-		if(msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,MSG_NOERROR) > 0){
+		while(msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,0) == -1);		
 			
-			struct sembuf reserverNb = {MutexMPNbPlaces, -1,0}; //p Operation --> Reservation sur MP NbPlace
-			struct sembuf libererNb  = {MutexMPNbPlaces, 1, 0}; //v Operation --> liberation sur MP NbPLace
-			
-			//Modifier le nombre de place occupées (décrémentation)
-			while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
-			NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-			unsigned int nbPlaceOccupee = nbp->nb;
-			shmdt(nbp);
-			semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
-			
-			if(nbPlaceOccupee == 0)
-			{
-				continue;
-			}
-			pid_t voiturierSortie;
-			if((voiturierSortie = SortirVoiture(numeroPlace)) == -1)
-			{
-				continue;
-			}
-			
-			//on stocke les voituriers en sortie pour pouvoir les supprimer si on appuie sur Q
-			voituriersEnSortie.push_back(voiturierSortie);
+		struct sembuf reserverNb = {MutexMPNbPlaces, -1,0}; //p Operation --> Reservation sur MP NbPlace
+		struct sembuf libererNb  = {MutexMPNbPlaces, 1, 0}; //v Operation --> liberation sur MP NbPLace
+		
+		//Modifier le nombre de place occupées (décrémentation)
+		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
+		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		unsigned int nbPlaceOccupee = nbp->nb;
+		shmdt(nbp);
+		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
+		
+		if(nbPlaceOccupee == 0)
+		{
+			continue;
 		}
+		pid_t voiturierSortie;
+		if((voiturierSortie = SortirVoiture(numeroPlace)) == -1)
+		{
+			continue;
+		}
+		
+		//on stocke les voituriers en sortie pour pouvoir les supprimer si on appuie sur Q
+		voituriersEnSortie.push_back(voiturierSortie);
+		
 	}
 
 }
