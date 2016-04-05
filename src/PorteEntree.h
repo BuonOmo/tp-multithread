@@ -18,6 +18,7 @@
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
+#include "Donnees.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -25,7 +26,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-// type Nom ( liste de paramètres );
+void PorteEntree (int pbalID, int pmemIDNbPlace, int pmemIDEtat, int pmemIDRequete, TypeBarriere barType);
 // Mode d'emploi :
 //
 // Contrat :
