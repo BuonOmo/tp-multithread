@@ -185,7 +185,7 @@ void Initialisation ()
 
 	if ((clavier = fork()) == 0)
 	{
-		SimulationClavier(baLSortie);
+		SimulationClavier(baLSortie, baLEntreeBPP, baLEntreeBPA, baLEntreeGB);
 	}
 	else if ((entreeBPP = fork()) == 0)
 	{

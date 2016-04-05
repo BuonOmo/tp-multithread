@@ -31,6 +31,10 @@
 
 //---------------------------------------------------- Variables statiques
 static int balSortie;
+static int balEntreeBPP;
+static int balEntreeBPA;
+static int balEntreeGB;
+
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
 // Mode d'emploi :
@@ -53,24 +57,27 @@ static void SignalDestruction (int noSig)
 	}
 }
 
-static void InitialisationClavier(int balSortieID)
-
+static void InitialisationClavier
+	(int aBalSortie, int aBalEntreeBPP,int aBalEntreeBPA,int aBalEntreeGB)
 {
     struct sigaction action1;
     action1.sa_handler = SignalDestruction;
     sigemptyset(&action1.sa_mask);
     action1.sa_flags = 0;
     sigaction(SIGUSR2, &action1, NULL);
-    balSortie = balSortieID;
-
+    balSortie = aBalSortie;
+	balEntreeBPP = aBalEntreeBPP;
+	balEntreeBPA = aBalEntreeBPA;
+	balEntreeGB = aBalEntreeGB;
 }
 
-void SimulationClavier (int BalSortieID )
+void SimulationClavier
+	(int aBalSortie, int aBalEntreeBPP,int aBalEntreeBPA,int aBalEntreeGB)
 {
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
-	InitialisationClavier(BalSortieID);
+	InitialisationClavier(aBalSortie, aBalEntreeBPP, aBalEntreeBPA, aBalEntreeGB);
     for ( ; ; )
     {
         Menu ( );
@@ -80,29 +87,55 @@ void SimulationClavier (int BalSortieID )
 void Commande ( char code, unsigned int valeur )
 {
     switch (code) {
-        case 'E': // EXIT
+        case 'E'|'e': // EXIT
             /* quitter l’appli :
              *  - envoyer SIGCHILD à mere
              *  - se tuer
              */
-             kill(getppid(), SIGUSR2);
+             kill(getppid(), SIGUSR2); //_________________________________________  exit(0) ici au lieu de SIGUSR2
              waitpid(getppid(),NULL,0);
             break;
-        case 'P': // PROF
-            /*  - ajouter une voiture à la file d’attente PE
-             * 
-             */
-            break;
-        case 'A': // AUTRE
-            /*   - ajouter une voiture à la file d’attente PE
+        case 'P'|'p': // PROF
+            /*  - ajouter une voiture à une file d’attente PE
              *
              */
+			switch (valeur)
+        	{
+	            case 1:
+					msgsnd(balEntreeBPP,NULL,0,0);
+	                break;
+	            case 2:
+	                 msgsnd(balEntreeGB ,NULL,0,0);
+	                break;
+				default:
+					return;
+        	}
             break;
-        case 'S': // SORTIE
+        case 'A'|'a': // AUTRE
+            /*   - ajouter une voiture à une file d’attente PE
+             *
+             */
+			switch (valeur)
+			{
+				case 1:
+					msgsnd(balEntreeBPA,NULL,0,0);
+					break;
+				case 2:
+					 msgsnd(balEntreeGB ,NULL,0,0);
+					break;
+				default:
+					return;
+			}
+            break;
+        case 'S'|'s': // SORTIE
               /* - ajouter une voiture à la file d’attente PS
                *
                */
-               msgsnd(balSortie,&valeur,sizeof(unsigned int),0); // Ecriture du numéro de place choisit
+               msgsnd(balSortie,&valeur,sizeof(int),0);
             break;
+		default:
+			std::cerr << "Mauvaise commande : "
+					  << code << ' ' << valeur << std::endl;
+			return;
     }
 }

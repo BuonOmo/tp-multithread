@@ -27,7 +27,8 @@
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-void SimulationClavier(int balSortieID);
+void SimulationClavier
+    (int aBalSortie,int aBalEntreeBPP,int aBalEntreeBPA,int aBaLEntreeGB);
 
 void Commande ( char code, unsigned int valeur );
 

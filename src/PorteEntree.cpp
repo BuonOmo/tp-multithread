@@ -22,7 +22,7 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <vector>
-// _____________________________________________________________________________________surement trop d’include, à trier
+// _____________________________________________________________________________________surement trop d’include, à trier TODO
 //------------------------------------------------------ Include personnel
 #include "PorteEntree.h"
 
