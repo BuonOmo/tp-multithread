@@ -4,7 +4,7 @@ RM       = rm
 RMFLAGS  = -f
 OUTPUT   = -o
 CPPFLAGS = -Wall -std=c++11 #-DMAP
-INT      = Mere.h GestionClavier.h
+INT      = Mere.h GestionClavier.h PorteSortie.h
 INTPATH  = ../src/
 REALPATH = ../src/
 REAL     = $(REALPATH)$(INT:.h=.cpp)

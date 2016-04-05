@@ -18,16 +18,24 @@
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
+#include "Outils.h"
 
 //------------------------------------------------------------- Constantes
 
-#define CHEMIN = "./parking";
+
 const int NB_SEM = 6;
 
 
 //------------------------------------------------------------------ Types
 
 //////////////////////////////////////////////////////////////////  PUBLIC
+
+struct Voiture {
+	TypeUsager usagerVoiture;
+	int numPlaque;
+	time_t hArrivee;	
+};
+typedef struct Voiture Voiture;
 
 struct Requete {
 	Voiture requetes[NB_BARRIERES_ENTREE]; 
@@ -46,13 +54,6 @@ struct Etat {
 };
 
 typedef struct Etat Etat;
-
-struct Voiture {
-	TypeUsager usagerVoiture;
-	int numPlaque;
-	time_t hArrivee;	
-};
-typedef struct Voiture Voiture;
 
 typedef enum Semaphore
 {

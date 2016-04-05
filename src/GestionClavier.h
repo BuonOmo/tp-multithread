@@ -26,7 +26,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void SimulationClavier();
+void SimulationClavier(int balSortieID);
 //
 
 #endif // GESTIONCLAVIER_H

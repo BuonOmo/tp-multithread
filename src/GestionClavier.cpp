@@ -53,7 +53,7 @@ static void SignalDestruction (int noSig)
 	}
 }
 
-static void InitialisationClavier()
+static void InitialisationClavier(int balSortieID)
 
 {
     struct sigaction action1;
@@ -61,17 +61,16 @@ static void InitialisationClavier()
     sigemptyset(&action1.sa_mask);
     action1.sa_flags = 0;
     sigaction(SIGUSR2, &action1, NULL);
-
-    balSortie = msgget(CLE,IPC_CREAT); // Récupération de la boîte au lettre pour la porteSOrtie
+    balSortie = balSortieID;
 
 }
 
-void SimulationClavier ( )
+void SimulationClavier (int BalSortieID )
 {
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
-	InitialisationClavier();
+	InitialisationClavier(BalSortieID);
     for ( ; ; )
     {
         Menu ( );
@@ -103,7 +102,7 @@ void Commande ( char code, unsigned int valeur )
               /* - ajouter une voiture à la file d’attente PS
                *
                */
-               msgsnd(balSortie,&valeur,sizeof(unsigned int)); // Ecriture du numéro de place choisit
+               msgsnd(balSortie,&valeur,sizeof(unsigned int),0); // Ecriture du numéro de place choisit
             break;
     }
 }

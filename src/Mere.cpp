@@ -26,10 +26,11 @@
 #include "Mere.h"
 #include "Donnees.h"
 #include "GestionClavier.h"
+#include "PorteSortie.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
-
+const char* CHEMIN = "./parking";
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
@@ -183,7 +184,7 @@ void Initialisation ()
 	
 	if ((clavier = fork()) == 0)
 	{
-		SimulationClavier();
+		SimulationClavier(baLSortie);
 	}
 	else if ((entreeBPP = fork()) == 0)
 	{

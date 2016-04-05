@@ -21,6 +21,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+#include <vector>
 //------------------------------------------------------ Include personnel
 #include "Donnees.h"
 #include "Mere.h"
@@ -33,7 +34,7 @@
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
-static vector<pid_t> voituriersEnSortie; //Vecteur qui stocke les pid des
+static std::vector<pid_t> voituriersEnSortie; //Vecteur qui stocke les pid des
 //voituriers toujours en route
 static int memIDNbPlace;
 static int memIDEtat;
@@ -54,40 +55,39 @@ static bool operator < (enum TypeUsager typeGauche, enum TypeUsager typeDroit)
     return (int)typeGauche<(int)typeDroit;
 }
 
-static unsigned int definirPriorite(Voiture const & a, Voiture const & b, Voiture const & c)
+static short unsigned int definirPriorite(Voiture const & a, Voiture const & b, Voiture const & c)
 //Mode d'emploi :
 //	Permet de gerer les prioritées entre prof et autre
 {
 	Voiture requetePrio = a;
 
-	if(requetePrio.typeUsager < b.typeUsager){
+	if(requetePrio.usagerVoiture < b.usagerVoiture){
 		requetePrio= b;
-	}else if(b.typeUsager == requetePrio.typeUsager){
-		if(b.instantArrivee < requetePrio.instantArrivee){
+	}else if(b.usagerVoiture == requetePrio.usagerVoiture){
+		if(b.hArrivee < requetePrio.hArrivee){
 			requetePrio= b;
 		}
 	}
 
-
-	if(requetePrio.typeUsager < c.typeUsager){
+	if(requetePrio.usagerVoiture < c.usagerVoiture){
         requetePrio= c;
-	}else if(c.typeUsager == requetePrio.typeUsager){
-		if(c.instantArrivee < requetePrio.instantArrivee){
+	}else if(c.usagerVoiture == requetePrio.usagerVoiture){
+		if(c.hArrivee < requetePrio.hArrivee){
 			requetePrio= c;
 		}
 	}
 
 
-    if(requetePrio.typeUsager == AUCUN){
+    if(requetePrio.usagerVoiture == AUCUN){
         return 0;
     }
-    if(requetePrio.typeUsager == a.typeUsager && requetePrio.instantArrivee == a.instantArrivee){
+    if(requetePrio.usagerVoiture == a.usagerVoiture && requetePrio.hArrivee == a.hArrivee){
         return 1;
     }
-    if(requetePrio.typeUsager == b.typeUsager && requetePrio.instantArrivee == b.instantArrivee){
+    if(requetePrio.usagerVoiture == b.usagerVoiture && requetePrio.hArrivee == b.hArrivee){
         return 2;
     }
-    if(requetePrio.typeUsager == c.typeUsager && requetePrio.instantArrivee == c.instantArrivee){
+    if(requetePrio.usagerVoiture == c.usagerVoiture && requetePrio.hArrivee == c.hArrivee){
         return 3;
     }
 
@@ -95,8 +95,8 @@ static unsigned int definirPriorite(Voiture const & a, Voiture const & b, Voitur
 }
 
 
-static void destruction(int noSignal);
-static void receptionMortVoiturier(int noSignal);
+static void DestructionPorteSortie(int noSignal);
+static void ReceptionMortVoiturier(int noSignal);
 
 
 static void InitialisationPorteSortie()
@@ -105,7 +105,7 @@ static void InitialisationPorteSortie()
 {
 	//Installation du handler sur SIGUSR2
 	struct sigaction action;
-	action.sa_handler = DestructionPorteSortie ;
+	action.sa_handler = DestructionPorteSortie;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0 ;
 	sigaction(SIGUSR2,&action,NULL);
@@ -119,20 +119,6 @@ static void InitialisationPorteSortie()
 
 }
 
-static void MoteurPorteSortie()
-//Mode d'emploi
-//	Phase moteur du processus Sortie
-{
-	int numeroPlace;
-
-	//Lecture sur le canal du numero de la place
-	if(msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,MSG_NOERROR) > 0){
-		pid_t voiturierSortie = SortirVoiture(numeroPlace);
-
-		//on stocke les voituriers en sortie pour pouvoir les supprimer si on appuie sur Q
-		voituriersEnSortie.push_back(voiturierSortie);
-	}
-}
 
 static void DestructionPorteSortie(int noSignal)
 //Mode d'emploi :
@@ -195,38 +181,42 @@ static void ReceptionMortVoiturier(int noSignal)
 		while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR); //Reservation de la memoire pour les Requetes
 
 		Requete *req = (Requete*) shmat(memIDRequete,NULL,0);
-		requetePorteBPPROF = a->requetes[PROF_BLAISE_PASCAL -1];
-		requetePorteBPAUTRE = a->requetes[AUTRE_BLAISE_PASCAL -1];
-		requetePorteGB = a->requetes[ENTREE_GASTON_BERGER -1];
+		requetePorteBPPROF = req->requetes[PROF_BLAISE_PASCAL -1];
+		requetePorteBPAUTRE = req->requetes[AUTRE_BLAISE_PASCAL -1];
+		requetePorteGB = req->requetes[ENTREE_GASTON_BERGER -1];
 		shmdt(req);
 
 		semop(semGene,&libererRequete,1); //Liberation de la memoire Requete
 
-		AfficherSortie(v.typeUsager,v.numeroPlaque,v.instantArrivee, time(NULL));
+		AfficherSortie(v.usagerVoiture,v.numPlaque,v.hArrivee, time(NULL));
 
-		vector<pid_t>::iterator itSorti = std::find(voituriersEnSortie.begin(),voituriersEnSortie.end(),filsFini);
+		vector<pid_t>::iterator itSorti;
+		while(itSorti != voituriersEnSortie.end() && *itSorti != filsFini)
+		{
+			++itSorti;
+		}
 		voituriersEnSortie.erase(itSorti);
 
 		//Modifier le nombre de place occupées (décrémentation)
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
 		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-		npb->nb--;
+		nbp->nb--;
 		shmdt(nbp);
 		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
 
 
-		unsigned int prio = definirPriorite(requetePorteBPPROF, requetePorteBPAUTRE, requetePorteGB);
+		short unsigned int prio = definirPriorite(requetePorteBPPROF, requetePorteBPAUTRE, requetePorteGB);
 
 		if(prio!=0){
 
-			while(semop(semID,&reserverRequete,1)==-1 && errno==EINTR); //Reservation de la memoire pour les requêtes afin d'effacer la requête de la mémoire
+			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR); //Reservation de la memoire pour les requêtes afin d'effacer la requête de la mémoire
 
 
 			Requete *reqASuppr = (Requete *) shmat(memIDRequete, NULL, 0) ;
 			reqASuppr->requetes[prio-1] = {AUCUN, 0,0};	 //On efface la requete de la memoire
 			shmdt(reqASuppr);
 
-			semop(semID,&libererRequete,1); //Liberation de la memoire
+			semop(semGene,&libererRequete,1); //Liberation de la memoire
 
 			struct sembuf pOp = {prio-1,1,0};
 			semop(semGene,&pOp,1); //On relache le bon semaphore de synchronisation (on choisit la bonne porte(1 BPprof, 2 BPAutre, 3GB))
@@ -251,7 +241,34 @@ void PorteSortie(int pmemIDNbPlace , int pmemIDEtat, int pmemIDRequete, int pbal
 	InitialisationPorteSortie();
 
 	for(;;){
-		MoteurPorteSortie();
+		int numeroPlace;
+
+		//Lecture sur le canal du numero de la place
+		if(msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,MSG_NOERROR) > 0){
+			
+			struct sembuf reserverNb = {MutexMPNbPlaces, -1,0}; //p Operation --> Reservation sur MP NbPlace
+			struct sembuf libererNb  = {MutexMPNbPlaces, 1, 0}; //v Operation --> liberation sur MP NbPLace
+			
+			//Modifier le nombre de place occupées (décrémentation)
+			while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
+			NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+			unsigned int nbPlaceOccupee = nbp->nb;
+			shmdt(nbp);
+			semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
+			
+			if(nbPlaceOccupee == 0)
+			{
+				continue;
+			}
+			pid_t voiturierSortie;
+			if((voiturierSortie = SortirVoiture(numeroPlace)) == -1)
+			{
+				continue;
+			}
+			
+			//on stocke les voituriers en sortie pour pouvoir les supprimer si on appuie sur Q
+			voituriersEnSortie.push_back(voiturierSortie);
+		}
 	}
 
 }
