@@ -27,6 +27,8 @@
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 void SimulationClavier();
-//
+
+void Commande ( char code, unsigned int valeur );
+
 
 #endif // GESTIONCLAVIER_H
