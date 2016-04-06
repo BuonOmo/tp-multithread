@@ -49,22 +49,9 @@ static int balEntreeGB;
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-static void SignalDestruction (int noSig)
-{
-	if(noSig == SIGUSR2)
-	{
-		exit(0);
-	}
-}
-
 static void InitialisationClavier
 	(int aBalSortie, int aBalEntreeBPP,int aBalEntreeBPA,int aBalEntreeGB)
 {
-    struct sigaction action1;
-    action1.sa_handler = SignalDestruction;
-    sigemptyset(&action1.sa_mask);
-    action1.sa_flags = 0;
-    sigaction(SIGUSR2, &action1, NULL);
     balSortie = aBalSortie;
 	balEntreeBPP = aBalEntreeBPP;
 	balEntreeBPA = aBalEntreeBPA;
@@ -92,8 +79,7 @@ void Commande ( char code, unsigned int valeur )
              *  - envoyer SIGCHILD à mere
              *  - se tuer
              */
-             kill(getppid(), SIGUSR2); //_________________________________________  exit(0) ici au lieu de SIGUSR2
-             waitpid(getppid(),NULL,0);
+            exit(0);
             break;
         case 'P'|'p': // PROF
             /*  - ajouter une voiture à une file d’attente PE

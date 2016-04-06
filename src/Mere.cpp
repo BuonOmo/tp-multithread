@@ -226,8 +226,6 @@ void Destruction ()
 	waitpid(entreeGB,NULL,0);
 	kill(sortie, SIGUSR2);
 	waitpid(sortie,NULL,0);
-	kill(clavier, SIGUSR2);
-	waitpid(clavier,NULL,0);
 	kill(heure, SIGUSR2);
 	waitpid(heure,NULL,0);
 	/** Fin destruction des processus fils **/
@@ -253,12 +251,12 @@ void Destruction ()
 
 int main ()
 {
-	/** Handler sur SIGUSR2 qui sera envoyé par le clavier lors de la commande E|e **/
+	/** Handler sur SIGCHLD lors de la destruction du clavier **/
 	struct sigaction action;
 	action.sa_handler = SignalDestruction;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0;
-	sigaction(SIGUSR2, &action, NULL);
+	sigaction(SIGCHLD, &action, NULL);
 	/** Fin handler **/
 	InitialiserApplication(XTERM);
 	Initialisation();
