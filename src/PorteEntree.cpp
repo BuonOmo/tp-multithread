@@ -21,10 +21,11 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
-#include <vector>
+#include <map>
 // _____________________________________________________________________________________surement trop d’include, à trier TODO
 //------------------------------------------------------ Include personnel
 #include "PorteEntree.h"
+#include "Donnees.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
@@ -32,7 +33,7 @@
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
-static vector<pid_t> voituriersEnEntree; //Vecteur qui stocke les pid des
+static map<pid_t, Voiture*> voituriersEnEntree; //Vecteur qui stocke les pid des
 //voituriers toujours en route
 static int memIDNbPlace;
 static int memIDEtat;
@@ -105,7 +106,8 @@ static void MoteurPorteEntree()
 
 			struct sembuf pOp = {(short unsigned int)barriereType-1,-1,0};  //p Operation sur le mutex de synchronisation
 			while(semop(semGene,&pOp,1)==-1 && errno==EINTR);
-
+			semop(semGene, &pOp,0);
+			
 			TypeZone zone;
 			if(barriereType == PROF_BLAISE_PASCAL)
 			{
@@ -120,13 +122,8 @@ static void MoteurPorteEntree()
 				zone = REQUETE_R3;
 			}
 			Effacer(zone);
-		}
-
-		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
-		nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-		nbp->nb++;
-		shmdt(nbp);
-		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
+			
+		}		
 
 		// garage voiture ajout du pid voiturier dans la list
 		pid_t voiturierEntree;
@@ -134,8 +131,7 @@ static void MoteurPorteEntree()
 		{
 			continue;
 		}
-		voituriersEnEntree.push_back(voiturierEntree);
-
+		voituriersEnEntree.insert(make_pair(voiturierEntree, &voiture));
 		//sleep 1s
 		sleep(TEMPO);
 
@@ -154,11 +150,11 @@ static void DestructionPorteEntree(int noSignal)
 		sigaction(SIGCHLD,&action,NULL);
 
 
-		for(vector<pid_t>::iterator itLE = voituriersEnEntree.begin(); itLE != voituriersEnEntree.end(); itLE++){
-			kill(*itLE, SIGUSR2);
+		for(map<pid_t, Voiture*>::iterator itLE = voituriersEnEntree.begin(); itLE != voituriersEnEntree.end(); itLE++){
+			kill(itLE->first, SIGUSR2);
 		}
-		for(vector<pid_t>::iterator itLE = voituriersEnEntree.begin(); itLE != voituriersEnEntree.end(); itLE++){
-			waitpid(*itLE,NULL,0);
+		for(map<pid_t, Voiture*>::iterator itLE = voituriersEnEntree.begin(); itLE != voituriersEnEntree.end(); itLE++){
+			waitpid(itLE->first,NULL,0);
 		}
 
 		exit(0);
@@ -171,37 +167,40 @@ static void ReceptionMortVoiturier(int noSignal)
 {
 
 	if(noSignal == SIGCHLD){
-		struct sembuf reserverEtat 	  = {MutexMPEtat, -1,0};	 //p Operation --> Reservation sur MP Etat
-		struct sembuf libererEtat 	  = {MutexMPEtat, 1, 0};	 //v Operation --> liberation sur MP Etat
+		struct sembuf reserverEtat = {MutexMPEtat, -1,0};	 //p Operation --> Reservation sur MP Etat
+		struct sembuf libererEtat  = {MutexMPEtat, 1, 0};	 //v Operation --> liberation sur MP Etat
+		struct sembuf reserverNb   = {MutexMPNbPlaces, -1,0}; //p Operation --> Reservation sur MP NbPlace
+		struct sembuf libererNb    = {MutexMPNbPlaces, 1, 0}; //v Operation --> liberation sur MP NbPLace
 
 		int status;
 		//Recuperer le fils qui a envoye le SIGCHLD
 		pid_t filsFini = wait(&status);
 
-		vector<pid_t>::iterator itEntree;
-		while(itEntree != voituriersEnEntree.end() && *itEntree != filsFini)
-		{
-			++itEntree;
-		}
+		map<pid_t, Voiture*>::iterator itEntree;
+		itEntree = voituriersEnEntree.find(filsFini);		
 
 		//Recuperer la bonne voiture qui a lancé le signal
-		Voiture v = *itEntree;
+		Voiture v = *(itEntree->second);
 
 		//Afficher ses caractéristiques dans l'endroit indique
 		AfficherPlace(WEXITSTATUS(status),v.usagerVoiture,v.numPlaque,v.hArrivee);
+		
+		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
+		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		nbp->nb++;
+		shmdt(nbp);
+		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
 
-		while(semop(semID,&reserverEtat,1)==-1 && errno==EINTR); //Reservation de la memoire
-
-
+		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR); //Reservation de la memoire
 		//Ecrire la voiture sur la mémoire partagée
 		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
-		a->placesParking[WEXITSTATUS(status)-1] = v;
-		shmdt(a);
+		et->places[WEXITSTATUS(status)-1] = v;
+		shmdt(et);
 
 		semop(semGene,&libererEtat,1); //Liberation de la memoire
 
 		//Supprimer le bon voiturier
-		voituriersEnSortie.erase(itSorti);
+		voituriersEnEntree.erase(itEntree);
 
 	}
 }

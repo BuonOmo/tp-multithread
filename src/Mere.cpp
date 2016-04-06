@@ -189,15 +189,15 @@ void Initialisation ()
 	}
 	else if ((entreeBPP = fork()) == 0)
 	{
-		PorteEntree(baLEntreeBPP, semGene, mpNbPlace, mpEtat, mpRequete);
+		PorteEntree(baLEntreeBPP, semGene, mpNbPlace, mpEtat, mpRequete, PROF_BLAISE_PASCAL);
 	}
 	else if ((entreeBPA = fork()) == 0)
 	{
-		PorteEntree(baLEntreeBPA, semGene, mpNbPlace, mpEtat, mpRequete);
+		PorteEntree(baLEntreeBPA, semGene, mpNbPlace, mpEtat, mpRequete, AUTRE_BLAISE_PASCAL);
 	}
 	else if ((entreeGB = fork()) == 0)
 	{
-		PorteEntree(baLEntreeGB, semGene, mpNbPlace, mpEtat, mpRequete);
+		PorteEntree(baLEntreeGB, semGene, mpNbPlace, mpEtat, mpRequete, ENTREE_GASTON_BERGER);
 	}
 	else if ((sortie = fork()) == 0)
 	{

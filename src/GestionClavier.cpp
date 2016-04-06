@@ -15,6 +15,7 @@
 //------------------------------------------------------ Include personnel
 #include "GestionClavier.h"
 #include "Menu.h"
+#include "Donnees.h"
 #include <unistd.h>
 #include <iostream>
 #include <signal.h>
@@ -34,6 +35,7 @@ static int balSortie;
 static int balEntreeBPP;
 static int balEntreeBPA;
 static int balEntreeGB;
+static int cpt;
 
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
@@ -87,11 +89,18 @@ void Commande ( char code, unsigned int valeur )
              */
 			switch (valeur)
         	{
+				Voiture v;
 	            case 1:
-					msgsnd(balEntreeBPP,NULL,0,0);
+					v.usagerVoiture = PROF;
+					v.numPlaque = (cpt++)%999;
+					v.hArrivee = time(NULL);
+					msgsnd(balEntreeBPP,&v,0,0);
 	                break;
 	            case 2:
-	                 msgsnd(balEntreeGB ,NULL,0,0);
+					v.usagerVoiture = PROF;
+					v.numPlaque = (cpt++)%999;
+					v.hArrivee = time(NULL);
+	                msgsnd(balEntreeGB ,&v,0,0);
 	                break;
 				default:
 					return;
@@ -103,11 +112,18 @@ void Commande ( char code, unsigned int valeur )
              */
 			switch (valeur)
 			{
+				Voiture v;
 				case 1:
-					msgsnd(balEntreeBPA,NULL,0,0);
+					v.usagerVoiture = AUTRE;
+					v.numPlaque = (cpt++)%999;
+					v.hArrivee = time(NULL);
+					msgsnd(balEntreeBPA,&v,0,0);
 					break;
 				case 2:
-					 msgsnd(balEntreeGB ,NULL,0,0);
+					v.usagerVoiture = AUTRE;
+					v.numPlaque = (cpt++)%999;
+					v.hArrivee = time(NULL);
+					msgsnd(balEntreeGB ,&v,0,0);
 					break;
 				default:
 					return;

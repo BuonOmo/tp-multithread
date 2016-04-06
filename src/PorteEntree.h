@@ -26,7 +26,7 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void PorteEntree (int pbalID, int pmemIDNbPlace, int pmemIDEtat, int pmemIDRequete, TypeBarriere barType);
+void PorteEntree (int pbalID, int psemID, int pmemIDNbPlace, int pmemIDEtat, int pmemIDRequete, TypeBarriere barType);
 // Mode d'emploi :
 //
 // Contrat :
