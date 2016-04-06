@@ -42,11 +42,13 @@ void SimulationClavier
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
+	// phase d’initialisation
 	balSortie = aBalSortie;
 	balEntreeBPP = aBalEntreeBPP;
 	balEntreeBPA = aBalEntreeBPA;
 	balEntreeGB = aBalEntreeGB;
 
+	// phase moteur
     for ( ; ; )
     {
         Menu ( );
@@ -59,7 +61,8 @@ void Commande ( char code, unsigned int valeur )
 {
 	Voiture uneVoiture;
     switch (code) {
-        case 'E'|'e': // EXIT
+        case 'E' :
+		case 'e' : // EXIT
             /* quitter l’appli :
              *  - envoyer SIGCHILD à mere
              *  - se tuer
@@ -67,7 +70,8 @@ void Commande ( char code, unsigned int valeur )
             exit(0);
             break;
 
-        case 'P'|'p': // PROF
+        case 'P' :
+		case 'p' : // PROF
             /* ajouter une voiture à une file d’attente PE */
 			uneVoiture.usagerVoiture = PROF;
 			uneVoiture.numPlaque = (immatriculation++)%MAX_IMMATRICULATION;
@@ -80,12 +84,11 @@ void Commande ( char code, unsigned int valeur )
 	            case 2:
 	                msgsnd(balEntreeGB ,&uneVoiture,sizeof(Voiture),0);
 	                break;
-				default:
-					return;
         	}
             break;
 
-        case 'A'|'a': // AUTRE
+        case 'A' :
+		case 'a' : // AUTRE
             /* ajouter une voiture à une file d’attente PE */
 
 			uneVoiture.usagerVoiture = AUTRE;
@@ -99,19 +102,13 @@ void Commande ( char code, unsigned int valeur )
 				case 2:
 					msgsnd(balEntreeGB ,&uneVoiture,sizeof(Voiture),0);
 					break;
-				default:
-					return;
 			}
             break;
 
-        case 'S'|'s': // SORTIE
+        case 'S' :
+		case 's' : // SORTIE
             /* ajouter une voiture à la file d’attente PS */
             msgsnd(balSortie,&valeur,sizeof(int),0);
             break;
-
-		default:
-			std::cerr << "Mauvaise commande : "
-					  << code << ' ' << valeur << std::endl;
-			return;
     }
 } //----- Fin de Commande

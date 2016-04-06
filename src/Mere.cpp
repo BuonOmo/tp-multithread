@@ -74,15 +74,6 @@ static void SignalDestruction (int noSig);
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-static void SignalDestruction (int noSig)
-{
-	if(noSig == SIGUSR2)
-	{
-		Destruction();
-		exit(0);
-	}
-}
-
 void Initialisation ()
 {
 	/** Création des clefs pour les IPC **/
@@ -215,7 +206,7 @@ void Moteur ()
 
 }
 
-void Destruction ()
+void Destruction (int noSignal)
 {
 	/** Destruction des processus fils **/
 	kill(entreeBPP, SIGUSR2);
@@ -247,13 +238,15 @@ void Destruction ()
 	semctl (semGene, 0, IPC_RMID, 0);
 	/** Fin destruction sémaphore **/
 	TerminerApplication();
+	
+	exit(0);
 }
 
 int main ()
 {
 	/** Handler sur SIGCHLD lors de la destruction du clavier **/
 	struct sigaction action;
-	action.sa_handler = SignalDestruction;
+	action.sa_handler = Destruction;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0;
 	sigaction(SIGCHLD, &action, NULL);
