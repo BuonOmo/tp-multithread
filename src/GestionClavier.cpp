@@ -1,32 +1,25 @@
 /*************************************************************************
                            GestionClavier  -  description
                              -------------------
-    début                : GestionClavier
+    début                : 18 mars 2016
     copyright            : (C) GestionClavier par Pierre Bayle et
                                Ulysse Buonomo
-    e-mail               : pbayle@insa-lyon.fr
+    e-mail               : ulysse.buonomo@insa-lyon.fr
 *************************************************************************/
 
 //-- Réalisation du module <GestionClavier> (fichier GestionClavier.cpp) -
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
+#include <iostream>
+#include <sys/msg.h>
 
 //------------------------------------------------------ Include personnel
 #include "GestionClavier.h"
-#include "Menu.h"
-#include "Donnees.h"
-#include <unistd.h>
-#include <iostream>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <sys/msg.h>
-#include <sys/shm.h>
-#include <sys/wait.h>
+
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
+#define MAX_IMMATRICULATION 999
 
 //------------------------------------------------------------------ Types
 
@@ -35,38 +28,25 @@ static int balSortie;
 static int balEntreeBPP;
 static int balEntreeBPA;
 static int balEntreeGB;
-static int cpt;
-
-//------------------------------------------------------ Fonctions privées
-//static type nom ( liste de paramètres )
-// Mode d'emploi :
-//
-// Contrat :
-//
-// Algorithme :
-//
-//{
-//} //----- fin de nom
+static int immatriculation;
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-static void InitialisationClavier
-	(int aBalSortie, int aBalEntreeBPP,int aBalEntreeBPA,int aBalEntreeGB)
-{
-    balSortie = aBalSortie;
-	balEntreeBPP = aBalEntreeBPP;
-	balEntreeBPA = aBalEntreeBPA;
-	balEntreeGB = aBalEntreeGB;
-}
-
 void SimulationClavier
 	(int aBalSortie, int aBalEntreeBPP,int aBalEntreeBPA,int aBalEntreeGB)
+// Algorithme :
+// Initialise la tâche gestion clavier. Lance la boucle d’accès au Menu,
+// voir Menu.h et la fonction Commande () ci-dessous.
 {
 #ifdef MAP
     cout << "Appel à la méthode SimulationClavier" << endl;
 #endif
-	InitialisationClavier(aBalSortie, aBalEntreeBPP, aBalEntreeBPA, aBalEntreeGB);
+	balSortie = aBalSortie;
+	balEntreeBPP = aBalEntreeBPP;
+	balEntreeBPA = aBalEntreeBPA;
+	balEntreeGB = aBalEntreeGB;
+
     for ( ; ; )
     {
         Menu ( );
@@ -74,7 +54,10 @@ void SimulationClavier
 } //----- Fin de SimulationClavier
 
 void Commande ( char code, unsigned int valeur )
+// Mode d’emploi :
+// Voir mode d’emploi de Menu (Menu.h)
 {
+	Voiture uneVoiture;
     switch (code) {
         case 'E'|'e': // EXIT
             /* quitter l’appli :
@@ -83,61 +66,52 @@ void Commande ( char code, unsigned int valeur )
              */
             exit(0);
             break;
+
         case 'P'|'p': // PROF
-            /*  - ajouter une voiture à une file d’attente PE
-             *
-             */
+            /* ajouter une voiture à une file d’attente PE */
+			uneVoiture.usagerVoiture = PROF;
+			uneVoiture.numPlaque = (immatriculation++)%MAX_IMMATRICULATION;
+			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
         	{
-				Voiture v;
 	            case 1:
-					v.usagerVoiture = PROF;
-					v.numPlaque = (cpt++)%999;
-					v.hArrivee = time(NULL);
-					msgsnd(balEntreeBPP,&v,0,0);
+					msgsnd(balEntreeBPP,&uneVoiture,sizeof(Voiture),0);
 	                break;
 	            case 2:
-					v.usagerVoiture = PROF;
-					v.numPlaque = (cpt++)%999;
-					v.hArrivee = time(NULL);
-	                msgsnd(balEntreeGB ,&v,0,0);
+	                msgsnd(balEntreeGB ,&uneVoiture,sizeof(Voiture),0);
 	                break;
 				default:
 					return;
         	}
             break;
+
         case 'A'|'a': // AUTRE
-            /*   - ajouter une voiture à une file d’attente PE
-             *
-             */
+            /* ajouter une voiture à une file d’attente PE */
+
+			uneVoiture.usagerVoiture = AUTRE;
+			uneVoiture.numPlaque = (immatriculation++)%MAX_IMMATRICULATION;
+			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
 			{
-				Voiture v;
 				case 1:
-					v.usagerVoiture = AUTRE;
-					v.numPlaque = (cpt++)%999;
-					v.hArrivee = time(NULL);
-					msgsnd(balEntreeBPA,&v,0,0);
+					msgsnd(balEntreeBPA,&uneVoiture,sizeof(Voiture),0);
 					break;
 				case 2:
-					v.usagerVoiture = AUTRE;
-					v.numPlaque = (cpt++)%999;
-					v.hArrivee = time(NULL);
-					msgsnd(balEntreeGB ,&v,0,0);
+					msgsnd(balEntreeGB ,&uneVoiture,sizeof(Voiture),0);
 					break;
 				default:
 					return;
 			}
             break;
+
         case 'S'|'s': // SORTIE
-              /* - ajouter une voiture à la file d’attente PS
-               *
-               */
-               msgsnd(balSortie,&valeur,sizeof(int),0);
+            /* ajouter une voiture à la file d’attente PS */
+            msgsnd(balSortie,&valeur,sizeof(int),0);
             break;
+
 		default:
 			std::cerr << "Mauvaise commande : "
 					  << code << ' ' << valeur << std::endl;
 			return;
     }
-}
+} //----- Fin de Commande
