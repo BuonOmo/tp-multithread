@@ -4,12 +4,12 @@ RM       = rm
 RMFLAGS  = -f
 OUTPUT   = -o
 CPPFLAGS = -Wall -std=c++11 #-DMAP
-INT      =
+INT      = Mere.h GestionClavier.h PorteSortie.h PorteEntree.h
 INTPATH  = ../src/
 REALPATH = ../src/
-REAL     = Mere.cpp #$(REALPATH)$(INT:.h=.cpp)
-OBJPATH  =
-OBJ      = Mere.o #$(OBJPATH)$(INT:.h=.o)
+REAL     = $(REALPATH)$(INT:.h=.cpp)
+OBJPATH  = ../exe/
+OBJ      = $(OBJPATH)$(INT:.h=.o)
 LIBPATH  =
 LIBS     = -ltp -ltcl -lncurses
 LIBPATH  = -L ../lib/
