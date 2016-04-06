@@ -216,7 +216,7 @@ static void ReceptionMortVoiturier(int noSignal)
 
 			semop(semGene,&libererRequete,1); //Liberation de la memoire
 
-			struct sembuf pOp = {(short unsigned int)prio-1,1,0};
+			struct sembuf pOp = {(short unsigned int)(prio-1),1,0};
 			semop(semGene,&pOp,1); //On relache le bon semaphore de synchronisation (on choisit la bonne porte(1 BPprof, 2 BPAutre, 3GB))
 		}
 

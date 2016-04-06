@@ -55,7 +55,8 @@ static void InitialisationPorteEntree()
 	action.sa_handler = DestructionPorteEntree ;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0 ;
-	sigaction(SIGUSR2,&action,NULL); //armer SIGUSR2 sur destruction;
+	//armer SIGUSR2 sur destruction;
+	sigaction(SIGUSR2,&action,NULL);
 
 
 	//Installation du handler actionFinVoiturier
@@ -63,7 +64,8 @@ static void InitialisationPorteEntree()
 	actionFinVoiturier.sa_handler = ReceptionMortVoiturier ;
 	sigemptyset(&actionFinVoiturier.sa_mask);
 	actionFinVoiturier.sa_flags = 0 ;
-	sigaction(SIGCHLD,&actionFinVoiturier,NULL);  //armer SIGCHLD sur actionFinVoiturier;
+	//armer SIGCHLD sur actionFinVoiturier;
+	sigaction(SIGCHLD,&actionFinVoiturier,NULL);
 
 }
 
@@ -104,10 +106,10 @@ static void MoteurPorteEntree()
 
 			semop(semGene,&libererRequete,1); //Liberation de la memoire Requete
 
-			struct sembuf pOp = {(short unsigned int)barriereType-1,-1,0};  //p Operation sur le mutex de synchronisation
+			struct sembuf pOp = {(short unsigned int)(barriereType-1),-1,0};  //p Operation sur le mutex de synchronisation
 			while(semop(semGene,&pOp,1)==-1 && errno==EINTR);
 			semop(semGene, &pOp,0);
-			
+
 			TypeZone zone;
 			if(barriereType == PROF_BLAISE_PASCAL)
 			{
@@ -122,8 +124,8 @@ static void MoteurPorteEntree()
 				zone = REQUETE_R3;
 			}
 			Effacer(zone);
-			
-		}		
+
+		}
 
 		// garage voiture ajout du pid voiturier dans la list
 		pid_t voiturierEntree;
@@ -177,14 +179,14 @@ static void ReceptionMortVoiturier(int noSignal)
 		pid_t filsFini = wait(&status);
 
 		map<pid_t, Voiture*>::iterator itEntree;
-		itEntree = voituriersEnEntree.find(filsFini);		
+		itEntree = voituriersEnEntree.find(filsFini);
 
 		//Recuperer la bonne voiture qui a lancé le signal
 		Voiture v = *(itEntree->second);
 
 		//Afficher ses caractéristiques dans l'endroit indique
 		AfficherPlace(WEXITSTATUS(status),v.usagerVoiture,v.numPlaque,v.hArrivee);
-		
+
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
 		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
 		nbp->nb++;
@@ -219,5 +221,6 @@ void PorteEntree (int pbalID, int psemID, int pmemIDNbPlace , int pmemIDEtat, in
 	barriereType = barType;
 
 	InitialisationPorteEntree();
+	MoteurPorteEntree();
 
 } //----- fin de Nom

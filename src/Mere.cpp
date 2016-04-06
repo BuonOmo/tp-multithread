@@ -58,7 +58,6 @@ static int semMPNbPlace;
 static int semMPEtat;
 static int semMPRequete;*/
 
-static void SignalDestruction (int noSig);
 
 //------------------------------------------------------ Fonctions privées
 //static type nom ( liste de paramètres )
@@ -238,7 +237,7 @@ void Destruction (int noSignal)
 	semctl (semGene, 0, IPC_RMID, 0);
 	/** Fin destruction sémaphore **/
 	TerminerApplication();
-	
+
 	exit(0);
 }
 
