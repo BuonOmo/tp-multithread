@@ -208,19 +208,9 @@ void Initialisation ()
 	{
 		PorteSortie(mpNbPlace, mpEtat, mpRequete, baLSortie, semGene);
 	}
-	else
-	{
-	}
 }
 
-void Moteur ()
-{
-
-	for(;;){}
-
-}
-
-void Destruction (int noSignal)
+void Destruction ()
 {
 	/** Destruction des processus fils **/
 	kill(entreeBPP, SIGUSR2);
@@ -258,16 +248,11 @@ void Destruction (int noSignal)
 
 int main ()
 {
-	/** Handler sur SIGCHLD lors de la destruction du clavier **/
-	struct sigaction action;
-	action.sa_handler = Destruction;
-	sigemptyset(&action.sa_mask);
-	action.sa_flags = 0;
-	sigaction(SIGCHLD, &action, NULL);
-	/** Fin handler **/
+	
 	InitialiserApplication(XTERM);
 	Initialisation();
-	Moteur();
+	waitpid(clavier,NULL,0);
+	Destruction();
 	return 0;
 
 }
