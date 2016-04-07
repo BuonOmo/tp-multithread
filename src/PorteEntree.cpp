@@ -82,6 +82,9 @@ static void MoteurPorteEntree()
 
 		DessinerVoitureBarriere(barriereType,voiture.usagerVoiture);
 
+		// heure d’arrivée à la barrière
+		voiture.hArrivee = time(NULL);
+
 		// Réservation de la mémoire pour le nb de places occupées
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
 		NbPlaceOccupees* nbpcheck =
@@ -204,6 +207,7 @@ static void ReceptionMortVoiturier(int noSignal)
 		// Recuperer la bonne voiture qui a lancé le signal
 		Voiture v = voituriersEnEntree.find(filsFini)->second;
 
+		// heure d’arrivée à la place
 		v.hArrivee = time(&voitureGaree);
 
 

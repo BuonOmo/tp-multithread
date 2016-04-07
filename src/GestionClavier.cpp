@@ -76,7 +76,6 @@ void Commande ( char code, unsigned int valeur )
 			uneVoiture.usagerVoiture = PROF;
 			uneVoiture.numPlaque =
 								1+(immatriculation++)%MAX_IMMATRICULATION;
-			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
         	{
 	            case 1:
@@ -94,7 +93,6 @@ void Commande ( char code, unsigned int valeur )
 			uneVoiture.usagerVoiture = AUTRE;
 			uneVoiture.numPlaque =
 								1+(immatriculation++)%MAX_IMMATRICULATION;
-			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
 			{
 				case 1:
