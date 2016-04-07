@@ -12,9 +12,6 @@
 //-------------------------------------------------------- Include système
 #include <unistd.h>
 #include <iostream>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
@@ -22,7 +19,6 @@
 
 //------------------------------------------------------ Include personnel
 #include "Heure.h"
-#include "Outils.h"
 #include "Mere.h"
 #include "Donnees.h"
 #include "GestionClavier.h"
@@ -32,7 +28,6 @@
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 const char* CHEMIN = "./parking";
-//------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
 static pid_t clavier;
@@ -52,23 +47,6 @@ static int mpEtat;
 static int mpRequete;
 
 static int semGene;
-/*static int semEntreeBPA;
-static int semEntreeGB;
-static int semMPNbPlace;
-static int semMPEtat;
-static int semMPRequete;*/
-
-
-//------------------------------------------------------ Fonctions privées
-//static type nom ( liste de paramètres )
-// Mode d'emploi :
-//
-// Contrat :
-//
-// Algorithme :
-//
-//{
-//} //----- fin de nom
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
@@ -89,19 +67,27 @@ void Initialisation ()
 	/** Création des BaL **/
 	if ((baLEntreeBPP = msgget(cleBalEntreeBPP, 0666|IPC_CREAT)) == -1)
 	{
-		cout << "Erreur pour l'entrée BPP (BAL)" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour l'entrée BPP (BAL)");
+		#endif
 	}
 	if ((baLEntreeBPA = msgget(cleBalEntreeBPA, 0666|IPC_CREAT)) == -1)
 	{
-		cout << "Erreur pour l'entrée BPA (BAL)" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour l'entrée BPA (BAL)");
+		#endif
 	}
 	if ((baLEntreeGB = msgget(cleBalEntreeGB, 0666|IPC_CREAT)) == -1)
 	{
-		cout << "Erreur pour l'entrée GB (BAL)" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour l'entrée GB (BAL)");
+		#endif
 	}
 	if ((baLSortie = msgget(cleBalSortie, 0666|IPC_CREAT)) == -1)
 	{
-		cout << "Erreur pour l'entrée Sortie (BAL)" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour l'entrée Sortie (BAL)");
+		#endif
 	}
 	/** Fin création des BaL **/
 
@@ -110,13 +96,18 @@ void Initialisation ()
 	/** Création des MP **/
 
 	//Initialisation de la memoire partagee NbPlaceOccupees
-	if ((mpNbPlace = shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT)) == -1)
+	mpNbPlace =
+			shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT);
+	if ( mpNbPlace == -1)
 	{
-		cout << "Erreur pour MP nbPlace" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour MP nbPlace");
+		#endif
 	}
 	else
 	{
-		NbPlaceOccupees *nbo = (NbPlaceOccupees *) shmat(mpNbPlace, NULL, 0);
+		NbPlaceOccupees *nbo =
+							(NbPlaceOccupees *) shmat(mpNbPlace, NULL, 0);
 		nbo->nb = 0;
 		shmdt(nbo);
 	}
@@ -125,7 +116,9 @@ void Initialisation ()
 	//Initialisation de la memoire partagee Etat
 	if ((mpEtat = shmget(cleMPEtat,sizeof(Etat), 0666|IPC_CREAT)) == -1)
 	{
-		cout << "Erreur pour MP Etat" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour MP Etat");
+		#endif
 	}
 	else
 	{
@@ -138,9 +131,12 @@ void Initialisation ()
 	}
 
 	//Initialisation de la memoire partagee Requete
-	if ((mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT)) == -1)
+	mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT);
+	if ( mpRequete == -1)
 	{
-		cout << "Erreur pour MP Requete" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur pour MP Requete");
+		#endif
 	}
 	else
 	{
@@ -158,7 +154,9 @@ void Initialisation ()
 	/** Création des sémaphores **/
 	if ((semGene = semget(cleSem,NB_SEM,0666|IPC_CREAT)) == -1)
 	{
-			cout << "Erreur de création de sémaphore" << endl;
+		#ifdef MAP
+			AFFICHER(MESSAGE,"Erreur de création de sémaphore");
+		#endif
 	}
 	else
 	{
@@ -175,19 +173,37 @@ void Initialisation ()
 
 	if ((clavier = fork()) == 0)
 	{
-		SimulationClavier(baLSortie, baLEntreeBPP, baLEntreeBPA, baLEntreeGB);
+		SimulationClavier( baLSortie,
+						   baLEntreeBPP,
+						   baLEntreeBPA,
+						   baLEntreeGB);
 	}
 	else if ((entreeBPP = fork()) == 0)
 	{
-		PorteEntree(baLEntreeBPP, semGene, mpNbPlace, mpEtat, mpRequete, PROF_BLAISE_PASCAL);
+		PorteEntree( baLEntreeBPP,
+			 		 semGene,
+					 mpNbPlace,
+					 mpEtat,
+					 mpRequete,
+					 PROF_BLAISE_PASCAL);
 	}
 	else if ((entreeBPA = fork()) == 0)
 	{
-		PorteEntree(baLEntreeBPA, semGene, mpNbPlace, mpEtat, mpRequete, AUTRE_BLAISE_PASCAL);
+		PorteEntree( baLEntreeBPA,
+			 		 semGene,
+					 mpNbPlace,
+					 mpEtat,
+					 mpRequete,
+					 AUTRE_BLAISE_PASCAL);
 	}
 	else if ((entreeGB = fork()) == 0)
 	{
-		PorteEntree(baLEntreeGB, semGene, mpNbPlace, mpEtat, mpRequete, ENTREE_GASTON_BERGER);
+		PorteEntree( baLEntreeGB ,
+			 		 semGene,
+					 mpNbPlace,
+					 mpEtat,
+					 mpRequete,
+					 ENTREE_GASTON_BERGER);
 	}
 	else if ((sortie = fork()) == 0)
 	{

@@ -110,20 +110,28 @@ static void EffacerPlace (unsigned int num) {
 	switch(num) {
 		case 1:
 			Effacer(ETAT_P1);
+            break;
 		case 2:
 			Effacer(ETAT_P2);
+            break;
 		case 3:
 			Effacer(ETAT_P3);
+            break;
 		case 4:
 			Effacer(ETAT_P4);
+            break;
 		case 5:
 			Effacer(ETAT_P5);
+            break;
 		case 6:
 			Effacer(ETAT_P6);
+            break;
 		case 7:
 			Effacer(ETAT_P7);
+            break;
 		case 8:
 			Effacer(ETAT_P8);
+            break;
 		default :
 			Afficher(MESSAGE, "Erreur de num");
 
@@ -210,105 +218,91 @@ static void ReceptionMortVoiturier(int noSignal)
 		Voiture requetePorteGB;
 
 		pid_t filsFini;
+        int numPlace = 0;
 		// Recuperer le fils qui a envoye le SIGCHLD
-		while((filsFini = waitpid(-1, &status, 0)) == -1);
-		int numPlace = 0;
-		if (WIFEXITED(status))
-		{
-			numPlace = WEXITSTATUS(status);
-		}
-		Afficher(MESSAGE, "1");
-		sleep(2);
+		while((filsFini = waitpid(-1, &status, 0)) > 0)
+        {
+            if (WIFEXITED(status))
+    		{
+    			numPlace = WEXITSTATUS(status);
+    		}
 
-		Afficher(MESSAGE, "2");
-		sleep(2);
+            Voiture v;
+    		// Reservation de la memoire pour l'Etat
+    		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
 
-		// Reservation de la memoire pour l'Etat
-		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
+    		// Recuperer la voiture
+    		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
+    		v = et->places[numPlace-1];
+    		et->places[numPlace-1] = {AUCUN,0,0};
+    		shmdt(et);
+    		// Liberation de la memoire Etat
+    		semop(semGene,&libererEtat,1);
 
-		// Recuperer la voiture
-		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
-		Voiture v = et->places[numPlace-1];
-		et->places[numPlace-1] = {AUCUN,0,0};
-		shmdt(et);
-		// Liberation de la memoire Etat
-		semop(semGene,&libererEtat,1);
+    		// Recuperer les requêtes en attente afin de déterminer
+    		// laquelle va être satisfaite en première
 
-		Afficher(MESSAGE, v.usagerVoiture);
-		sleep(2);
+    		// Reservation de la memoire pour les Requetes
+    		while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
 
-		// Recuperer les requêtes en attente afin de déterminer
-		// laquelle va être satisfaite en première
+    		Requete *req = (Requete*) shmat(memIDRequete,NULL,0);
+    		requetePorteBPPROF = req->requetes[PROF_BLAISE_PASCAL -1];
+    		requetePorteBPAUTRE = req->requetes[AUTRE_BLAISE_PASCAL -1];
+    		requetePorteGB = req->requetes[ENTREE_GASTON_BERGER -1];
+    		shmdt(req);
 
-		// Reservation de la memoire pour les Requetes
-		while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
+    		// Liberation de la memoire Requete
+    		semop(semGene,&libererRequete,1);
 
-		Requete *req = (Requete*) shmat(memIDRequete,NULL,0);
-		requetePorteBPPROF = req->requetes[PROF_BLAISE_PASCAL -1];
-		requetePorteBPAUTRE = req->requetes[AUTRE_BLAISE_PASCAL -1];
-		requetePorteGB = req->requetes[ENTREE_GASTON_BERGER -1];
-		shmdt(req);
+    		EffacerPlace(numPlace);
 
-		// Liberation de la memoire Requete
-		semop(semGene,&libererRequete,1);
-        string debug;
-        debug.append("NumPlace : ");
-        debug+= numPlace;
-		Afficher(MESSAGE, debug.c_str());
-		sleep(2);
-
-		EffacerPlace(numPlace);
-		Afficher(MESSAGE, "5");
-		sleep(5);
-		AfficherSortie(v.usagerVoiture,
-                       v.numPlaque,
-                       v.hArrivee,
-                       time(NULL));
-
-		vector<pid_t>::iterator itSorti;
-		while(itSorti != voituriersEnSortie.end() && *itSorti != filsFini)
-		{
-			++itSorti;
-		}
-		voituriersEnSortie.erase(itSorti);
-
-		// Modifier le nombre de place occupées (décrémentation)
-
-		// Réservation de la mémoire pour le nb de places occupées
-		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
-		NbPlaceOccupees* nbp =
-                            (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-		nbp->nb--;
-		shmdt(nbp);
-		// Libération de la mémoire NbPlace
-		semop(semGene,&libererNb,1);
+    		AfficherSortie(v.usagerVoiture,
+                           v.numPlaque,
+                           v.hArrivee,
+                           time(NULL));
 
 
-		short unsigned int prio = definirPriorite(requetePorteBPPROF,
-                                                  requetePorteBPAUTRE,
-                                                  requetePorteGB);
+    		vector<pid_t>::iterator itSorti;
+    		for(itSorti = voituriersEnSortie.begin(); itSorti != voituriersEnSortie.end() && *itSorti != filsFini; itSorti++);
+    		voituriersEnSortie.erase(itSorti);
 
-		if (prio!=0){
+    		// Modifier le nombre de place occupées (décrémentation)
 
-			// Reservation de la memoire pour les requêtes afin d'effacer
-			// la requête de la mémoire
-			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
+    		// Réservation de la mémoire pour le nb de places occupées
+    		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
+    		NbPlaceOccupees* nbp =
+                                (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+    		nbp->nb--;
+    		shmdt(nbp);
+    		// Libération de la mémoire NbPlace
+    		semop(semGene,&libererNb,1);
 
 
-			Requete *reqASuppr = (Requete *) shmat(memIDRequete, NULL, 0) ;
-            // On efface la requete de la memoire
-			reqASuppr->requetes[prio-1] = {AUCUN, 0,0};
-			shmdt(reqASuppr);
+    		short unsigned int prio = definirPriorite(requetePorteBPPROF,
+                                                      requetePorteBPAUTRE,
+                                                      requetePorteGB);
 
-			// Liberation de la memoire
-			semop(semGene,&libererRequete,1);
+    		if (prio!=0){
 
-			struct sembuf pOp = {(short unsigned int)(prio-1),1,0};
-			// On relache le bon semaphore de synchronisation (on choisit
-			// la bonne porte(1 BPprof, 2 BPAutre, 3GB))
-			semop(semGene,&pOp,1);
-		}
+    			// Reservation de la memoire pour les requêtes afin d'effacer
+    			// la requête de la mémoire
+    			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
 
+
+    			Requete *reqASuppr = (Requete *) shmat(memIDRequete, NULL, 0) ;
+                // On efface la requete de la memoire
+    			reqASuppr->requetes[prio-1] = {AUCUN, 0,0};
+    			shmdt(reqASuppr);
+
+    			// Liberation de la memoire
+    			semop(semGene,&libererRequete,1);
+
+    			struct sembuf pOp = {(short unsigned int)(prio-1),1,0};
+    			// On relache le bon semaphore de synchronisation (on choisit
+    			// la bonne porte(1 BPprof, 2 BPAutre, 3GB))
+    			semop(semGene,&pOp,1);
+    		}
+        }
 	}
 }
 
@@ -354,10 +348,7 @@ void PorteSortie( int pmemIDNbPlace,
 			continue;
 		}
 		pid_t voiturierSortie;
-		if ((voiturierSortie = SortirVoiture(numeroPlace)) == -1)
-		{
-			continue;
-		}
+		voiturierSortie = SortirVoiture(numeroPlace);
 
 		// on stocke les voituriers en sortie pour pouvoir les supprimer
 		// si on appuie sur E

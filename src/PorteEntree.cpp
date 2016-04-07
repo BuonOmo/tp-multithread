@@ -34,7 +34,7 @@
 
 //---------------------------------------------------- Variables statiques
 // Vecteur qui stocke les pid des voituriers toujours en marche
-static map<pid_t, Voiture*> voituriersEnEntree;
+static map<pid_t, Voiture> voituriersEnEntree;
 static int memIDNbPlace;
 static int memIDEtat;
 static int memIDRequete;
@@ -144,11 +144,8 @@ static void MoteurPorteEntree()
 
 		// garage voiture ajout du pid voiturier dans la list
 		pid_t voiturierEntree;
-		if((voiturierEntree = GarerVoiture(barriereType)) == -1)
-		{
-			continue;
-		}
-		voituriersEnEntree.insert(make_pair(voiturierEntree, &voiture));
+		voiturierEntree = GarerVoiture(barriereType);
+		voituriersEnEntree.insert(make_pair(voiturierEntree, voiture));
 
 		// sleep 1s
 		sleep(TEMPO);
@@ -167,7 +164,7 @@ static void DestructionPorteEntree(int noSignal)
 		action.sa_flags = 0 ;
 		sigaction(SIGCHLD,&action,NULL);
 
-		map<pid_t, Voiture*>::iterator itLE;
+		map<pid_t, Voiture>::iterator itLE;
 
 		for( itLE = voituriersEnEntree.begin();
 		     itLE != voituriersEnEntree.end();
@@ -188,47 +185,48 @@ static void ReceptionMortVoiturier(int noSignal)
 // Mode d'emploi
 // 	Handler pour le signal SIGCHLD
 {
+	// p Operation --> Reservation sur MP Etat
+	struct sembuf reserverEtat = {MutexMPEtat, -1,0};
+	// v Operation --> liberation sur MP Etat
+	struct sembuf libererEtat  = {MutexMPEtat, 1, 0};
 
-	if(noSignal == SIGCHLD){
-		// p Operation --> Reservation sur MP Etat
-		struct sembuf reserverEtat = {MutexMPEtat, -1,0};
-		// v Operation --> liberation sur MP Etat
-		struct sembuf libererEtat  = {MutexMPEtat, 1, 0};
+	int status;
 
-		int status;
-		// Recuperer le fils qui a envoye le SIGCHLD
-		pid_t filsFini;
-		// Recuperer le fils qui a envoye le SIGCHLD
-		while((filsFini = waitpid(-1, &status, 0)) == -1);
-		int numPlace = 0;
+	pid_t filsFini;
+	int numPlace = 0;
+	// Recuperer le fils qui a envoye le SIGCHLD
+	while((filsFini = waitpid(-1, &status, 0)) > 0) {
+
+		time_t voitureGaree = time(NULL);
 		if (WIFEXITED(status))
 		{
 			numPlace = WEXITSTATUS(status);
 		}
 
-		map<pid_t, Voiture*>::iterator itEntree;
-		itEntree = voituriersEnEntree.find(filsFini);
-
 		// Recuperer la bonne voiture qui a lancé le signal
-		Voiture *v = itEntree->second;
+		Voiture v = voituriersEnEntree.find(filsFini)->second;
+
+		v.hArrivee = time(&voitureGaree);
+
 
 		// Ficher ses caractéristiques dans l'endroit indique
-		AfficherPlace(numPlace,v->usagerVoiture,v->numPlaque,v->hArrivee);
+		AfficherPlace(numPlace,v.usagerVoiture,v.numPlaque,v.hArrivee);
 
 		// Reservation de la memoire
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
 		// Ecrire la voiture sur la mémoire partagée
 		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
-		et->places[numPlace-1] = *v;
+		et->places[numPlace-1] = v;
 		shmdt(et);
 
 		// Liberation de la memoire
 		semop(semGene,&libererEtat,1);
 
 		// Supprimer la voiture de la map
-		voituriersEnEntree.erase(itEntree); //-----------------------------------------Possible de faire avec filsFini / y a un bug par ici (affichage multiple de la meme plaque et meme heure)
-
+		voituriersEnEntree.erase(filsFini);
 	}
+
+
 } //----- Fin de ReceptionMortVoiturier
 
 //////////////////////////////////////////////////////////////////  PUBLIC
