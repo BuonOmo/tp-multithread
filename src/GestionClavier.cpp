@@ -74,7 +74,8 @@ void Commande ( char code, unsigned int valeur )
 		case 'p' : // PROF
             /* ajouter une voiture à une file d’attente PE */
 			uneVoiture.usagerVoiture = PROF;
-			uneVoiture.numPlaque = 1+(immatriculation++)%MAX_IMMATRICULATION;
+			uneVoiture.numPlaque =
+								1+(immatriculation++)%MAX_IMMATRICULATION;
 			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
         	{
@@ -91,7 +92,8 @@ void Commande ( char code, unsigned int valeur )
 		case 'a' : // AUTRE
             /* ajouter une voiture à une file d’attente PE */
 			uneVoiture.usagerVoiture = AUTRE;
-			uneVoiture.numPlaque = 1+(immatriculation++)%MAX_IMMATRICULATION;
+			uneVoiture.numPlaque =
+								1+(immatriculation++)%MAX_IMMATRICULATION;
 			uneVoiture.hArrivee = time(NULL);
 			switch (valeur)
 			{
