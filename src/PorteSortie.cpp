@@ -92,6 +92,30 @@ static short unsigned int definirPriorite(Voiture const & a, Voiture const & b, 
     return 0;
 }
 
+static void EffacerPlace (unsigned int num) {
+	switch(num) {
+		case 1:
+			Effacer(ETAT_P1);
+		case 2:
+			Effacer(ETAT_P2);
+		case 3:
+			Effacer(ETAT_P3);
+		case 4:
+			Effacer(ETAT_P4);
+		case 5:
+			Effacer(ETAT_P5);
+		case 6:
+			Effacer(ETAT_P6);
+		case 7:
+			Effacer(ETAT_P7);
+		case 8:
+			Effacer(ETAT_P8);
+		default :
+			Afficher(MESSAGE, "Erreur de num");
+		
+	}
+}
+
 
 static void DestructionPorteSortie(int noSignal);
 static void ReceptionMortVoiturier(int noSignal);
@@ -159,21 +183,30 @@ static void ReceptionMortVoiturier(int noSignal)
 		Voiture requetePorteBPAUTRE;
 		Voiture requetePorteGB;
 
+		pid_t filsFini; 
+		while((filsFini = waitpid(-1, &status, 0)) == -1); //Recuperer le fils qui a envoye le SIGCHLD
+		int numPlace = 0;
+		if(WIFEXITED(status))
+		{
+			numPlace = WEXITSTATUS(status);
+		}
+		Afficher(MESSAGE, "1");
+		sleep(5);
 
-		pid_t filsFini = wait(&status); //Recuperer le fils qui a envoye le SIGCHLD
-
-
-		Effacer((TypeZone)WEXITSTATUS(status)); //Efface la bonne place sur l'ecran
-
+		Afficher(MESSAGE, "2");
+		sleep(5);
 
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR); //Reservation de la memoire pour l'Etat
 
 		//Recuperer la voiture
-		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0) ;
-		Voiture v = et->places[WEXITSTATUS(status)-1] ;
+		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
+		Voiture v = et->places[numPlace-1];
+		et->places[numPlace-1] = {AUCUN,0,0};
 		shmdt(et);
 		semop(semGene,&libererEtat,1); //Liberation de la memoire Etat
 
+		Afficher(MESSAGE, v.usagerType);
+		sleep(5);
 
 		//Recuperer les requêtes en attente afin de déterminer laquelle va être satisfaite en première
 		while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR); //Reservation de la memoire pour les Requetes
@@ -186,6 +219,12 @@ static void ReceptionMortVoiturier(int noSignal)
 
 		semop(semGene,&libererRequete,1); //Liberation de la memoire Requete
 
+		Afficher(MESSAGE, "4");
+		sleep(5);
+		
+		EffacerPlace(numPlace);
+		Afficher(MESSAGE, "5");
+		sleep(5);
 		AfficherSortie(v.usagerVoiture,v.numPlaque,v.hArrivee, time(NULL));
 
 		vector<pid_t>::iterator itSorti;

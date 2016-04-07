@@ -87,12 +87,12 @@ static void MoteurPorteEntree()
 		DessinerVoitureBarriere(barriereType,voiture.usagerVoiture);
 
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
-		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-		unsigned int nbPlaceOccupee = nbp->nb;
-		shmdt(nbp);
+		NbPlaceOccupees* nbpcheck = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		unsigned int nbPlaceOccupee = nbpcheck->nb;
+		shmdt(nbpcheck);
 		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
 
-		if(nbPlaceOccupee == NB_PLACES)
+		if(nbPlaceOccupee >= NB_PLACES)
 		{
 			AfficherRequete(barriereType, voiture.usagerVoiture, voiture.hArrivee);
 
@@ -127,6 +127,12 @@ static void MoteurPorteEntree()
 
 		}
 
+		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
+		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		nbp->nb++;
+		shmdt(nbp);
+		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
+				
 		// garage voiture ajout du pid voiturier dans la list
 		pid_t voiturierEntree;
 		if((voiturierEntree = GarerVoiture(barriereType)) == -1)
@@ -134,6 +140,8 @@ static void MoteurPorteEntree()
 			continue;
 		}
 		voituriersEnEntree.insert(make_pair(voiturierEntree, &voiture));
+		
+		
 		//sleep 1s
 		sleep(TEMPO);
 
@@ -171,8 +179,6 @@ static void ReceptionMortVoiturier(int noSignal)
 	if(noSignal == SIGCHLD){
 		struct sembuf reserverEtat = {MutexMPEtat, -1,0};	 //p Operation --> Reservation sur MP Etat
 		struct sembuf libererEtat  = {MutexMPEtat, 1, 0};	 //v Operation --> liberation sur MP Etat
-		struct sembuf reserverNb   = {MutexMPNbPlaces, -1,0}; //p Operation --> Reservation sur MP NbPlace
-		struct sembuf libererNb    = {MutexMPNbPlaces, 1, 0}; //v Operation --> liberation sur MP NbPLace
 
 		int status;
 		//Recuperer le fils qui a envoye le SIGCHLD
@@ -186,12 +192,6 @@ static void ReceptionMortVoiturier(int noSignal)
 
 		//Afficher ses caractéristiques dans l'endroit indique
 		AfficherPlace(WEXITSTATUS(status),v.usagerVoiture,v.numPlaque,v.hArrivee);
-
-		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR); // Réservation de la mémoire pour le nb de places occupées
-		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
-		nbp->nb++;
-		shmdt(nbp);
-		semop(semGene,&libererNb,1); //Libération de la mémoire NbPlace
 
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR); //Reservation de la memoire
 		//Ecrire la voiture sur la mémoire partagée

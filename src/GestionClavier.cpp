@@ -108,7 +108,7 @@ void Commande ( char code, unsigned int valeur )
         case 'S' :
 		case 's' : // SORTIE
             /* ajouter une voiture à la file d’attente PS */
-            msgsnd(balSortie,&valeur,sizeof(int),0);
+            msgsnd(balSortie,&valeur,sizeof(unsigned int),0);
             break;
     }
 } //----- Fin de Commande
