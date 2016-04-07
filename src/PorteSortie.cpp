@@ -218,10 +218,10 @@ static void ReceptionMortVoiturier(int noSignal)
 			numPlace = WEXITSTATUS(status);
 		}
 		Afficher(MESSAGE, "1");
-		sleep(5);
+		sleep(2);
 
 		Afficher(MESSAGE, "2");
-		sleep(5);
+		sleep(2);
 
 		// Reservation de la memoire pour l'Etat
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
@@ -235,7 +235,7 @@ static void ReceptionMortVoiturier(int noSignal)
 		semop(semGene,&libererEtat,1);
 
 		Afficher(MESSAGE, v.usagerVoiture);
-		sleep(5);
+		sleep(2);
 
 		// Recuperer les requêtes en attente afin de déterminer
 		// laquelle va être satisfaite en première
@@ -252,8 +252,8 @@ static void ReceptionMortVoiturier(int noSignal)
 		// Liberation de la memoire Requete
 		semop(semGene,&libererRequete,1);
 
-		Afficher(MESSAGE, "4");
-		sleep(5);
+		Afficher(MESSAGE, "NumPlace : " numPlace);
+		sleep(2);
 
 		EffacerPlace(numPlace);
 		Afficher(MESSAGE, "5");
