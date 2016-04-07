@@ -12,26 +12,16 @@
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <sys/stat.h>
-#include <iostream>
 #include <sys/msg.h>
-#include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <map>
-// _____________________________________________________________________________________surement trop d’include, à trier TODO
+
 //------------------------------------------------------ Include personnel
 #include "PorteEntree.h"
-#include "Donnees.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
-//------------------------------------------------------------- Constantes
-
-//------------------------------------------------------------------ Types
-
 //---------------------------------------------------- Variables statiques
 // Vecteur qui stocke les pid des voituriers toujours en marche
 static map<pid_t, Voiture> voituriersEnEntree;
@@ -94,7 +84,8 @@ static void MoteurPorteEntree()
 
 		// Réservation de la mémoire pour le nb de places occupées
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
-		NbPlaceOccupees* nbpcheck = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		NbPlaceOccupees* nbpcheck =
+							(NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
 		unsigned int nbPlaceOccupee = nbpcheck->nb;
 		shmdt(nbpcheck);
 		// Libération de la mémoire NbPlace
@@ -102,19 +93,25 @@ static void MoteurPorteEntree()
 
 		if(nbPlaceOccupee >= NB_PLACES)
 		{
-			AfficherRequete(barriereType, voiture.usagerVoiture, voiture.hArrivee);
+			AfficherRequete( barriereType,
+							 voiture.usagerVoiture,
+							 voiture.hArrivee);
 
 			// On ecrit dans la mémoire partagée que l'on a une requete !
 
-			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR); // Reservation de la memoire partagee Requete
+			// Reservation de la memoire partagee Requete
+			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
 
 			Requete *req = (Requete*) shmat(memIDRequete,NULL,0);
 			req->requetes[barriereType - 1] = voiture;
 			shmdt(req);
 
-			semop(semGene,&libererRequete,1); // Liberation de la memoire Requete
+			// Liberation de la memoire Requete
+			semop(semGene,&libererRequete,1);
 
-			struct sembuf pOp = {(short unsigned int)(barriereType-1),-1,0};  // p Operation sur le mutex de synchronisation
+			// p Operation sur le mutex de synchronisation
+			struct sembuf pOp =
+							{(short unsigned int)(barriereType-1),-1,0};
 			while(semop(semGene,&pOp,1)==-1 && errno==EINTR);
 			semop(semGene, &pOp,0);
 
@@ -137,7 +134,8 @@ static void MoteurPorteEntree()
 
 		// Réservation de la mémoire pour le nb de places occupées
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
-		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		NbPlaceOccupees* nbp =
+							(NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
 		nbp->nb++;
 		shmdt(nbp);
 		semop(semGene,&libererNb,1); // Libération de la mémoire NbPlace
@@ -237,8 +235,6 @@ void PorteEntree (int pbalID,
 				  int pmemIDEtat,
 				  int pmemIDRequete,
 				  TypeBarriere barType)
-// Algorithme :
-//
 {
 	balEntree = pbalID;
 	semGene = psemID;

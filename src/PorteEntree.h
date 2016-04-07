@@ -11,9 +11,7 @@
 #define PORTE_ENTREE_H
 
 //------------------------------------------------------------------------
-// Rôle de la tâche <PorteEntree>
-//
-//
+// Gère une porte d’entrée (tâche lancée 3 fois)
 //------------------------------------------------------------------------
 
 /////////////////////////////////////////////////////////////////  INCLUDE
@@ -26,10 +24,13 @@
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void PorteEntree (int pbalID, int psemID, int pmemIDNbPlace, int pmemIDEtat, int pmemIDRequete, TypeBarriere barType);
+void PorteEntree ( int pbalID,
+                   int psemID,
+                   int pmemIDNbPlace,
+                   int pmemIDEtat,
+                   int pmemIDRequete,
+                   TypeBarriere barType);
 // Mode d'emploi :
-//
-// Contrat :
-//
+// Lance la tâche porteEntree
 
 #endif // PORTE_ENTREE_H

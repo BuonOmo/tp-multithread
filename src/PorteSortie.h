@@ -6,7 +6,7 @@
     e-mail               : pierre.bayle@insa-lyon.fr
 *************************************************************************/
 
-//---------- Interface de la tâche <PorteSortie> (fichier PorteSortie.h) -------
+//-------- Interface de la tâche <PorteSortie> (fichier PorteSortie.h) ---
 #ifndef PORTE_SORTIE_H
 #define PORTE_SORTIE_H
 
@@ -16,19 +16,14 @@
 //
 //------------------------------------------------------------------------
 
-/////////////////////////////////////////////////////////////////  INCLUDE
-//--------------------------------------------------- Interfaces utilisées
-
-//------------------------------------------------------------- Constantes
-
-//------------------------------------------------------------------ Types
-
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void PorteSortie(int pmemIDNbPlace , int pmemIDEtat, int pmemIDRequete, int pbalID, int psemID);
+void PorteSortie( int pmemIDNbPlace,
+                  int pmemIDEtat,
+                  int pmemIDRequete,
+                  int pbalID,
+                  int psemID);
 // Mode d'emploi :
 //	Processus fils sortie.
-// Contrat :
-//
 
 #endif // PORTE_SORTIE_H

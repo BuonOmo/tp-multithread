@@ -11,7 +11,6 @@
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
 #include <unistd.h>
-#include <iostream>
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
@@ -96,8 +95,9 @@ void Initialisation ()
 	/** Création des MP **/
 
 	//Initialisation de la memoire partagee NbPlaceOccupees
-
-	if ( (mpNbPlace = shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT)) == -1)
+	mpNbPlace =
+			shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT);
+	if (  mpNbPlace == -1)
 	{
 		#ifdef MAP
 			AFFICHER(MESSAGE,"Erreur pour MP nbPlace");
@@ -130,8 +130,8 @@ void Initialisation ()
 	}
 
 	//Initialisation de la memoire partagee Requete
-
-	if ( (mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT)) == -1)
+	mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT);
+	if ( mpRequete == -1)
 	{
 		#ifdef MAP
 			AFFICHER(MESSAGE,"Erreur pour MP Requete");

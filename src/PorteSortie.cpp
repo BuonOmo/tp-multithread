@@ -10,27 +10,19 @@
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
-#include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <sys/stat.h>
 #include <iostream>
 #include <sys/msg.h>
-#include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <vector>
+
 //------------------------------------------------------ Include personnel
 #include "Donnees.h"
 #include "Mere.h"
 #include "PorteSortie.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
-//------------------------------------------------------------- Constantes
-
-//------------------------------------------------------------------ Types
-
 //---------------------------------------------------- Variables statiques
 // Vecteur qui stocke les pid des voituriers toujours en marche
 static std::vector<pid_t> voituriersEnSortie;
@@ -39,9 +31,11 @@ static int memIDEtat;
 static int memIDRequete;
 static int semGene;
 static int balSortie;
+
 //------------------------------------------------------ Fonctions privées
 
-static bool operator < (enum TypeUsager typeGauche, enum TypeUsager typeDroit)
+static bool operator < (enum TypeUsager typeGauche,
+                        enum TypeUsager typeDroit)
 // Mode d'emploi :
 // 	Redefinition de l'opérateur < pour le type TypesUsager
 {
@@ -53,7 +47,9 @@ static bool operator < (enum TypeUsager typeGauche, enum TypeUsager typeDroit)
     return (int)typeGauche<(int)typeDroit;
 }
 
-static short unsigned int definirPriorite(Voiture const & a, Voiture const & b, Voiture const & c)
+static short unsigned int definirPriorite(Voiture const & a,
+                                          Voiture const & b,
+                                          Voiture const & c)
 // Mode d'emploi :
 // 	Permet de gerer les prioritées entre prof et autre
 {
@@ -263,7 +259,10 @@ static void ReceptionMortVoiturier(int noSignal)
 
 
     		vector<pid_t>::iterator itSorti;
-    		for(itSorti = voituriersEnSortie.begin(); itSorti != voituriersEnSortie.end() && *itSorti != filsFini; itSorti++);
+    		for(itSorti = voituriersEnSortie.begin();
+                itSorti != voituriersEnSortie.end()
+                            && *itSorti != filsFini;
+                itSorti++);
     		voituriersEnSortie.erase(itSorti);
 
     		// Modifier le nombre de place occupées (décrémentation)
@@ -271,7 +270,7 @@ static void ReceptionMortVoiturier(int noSignal)
     		// Réservation de la mémoire pour le nb de places occupées
     		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
     		NbPlaceOccupees* nbp =
-                                (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+                            (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
     		nbp->nb--;
     		shmdt(nbp);
     		// Libération de la mémoire NbPlace
@@ -282,14 +281,15 @@ static void ReceptionMortVoiturier(int noSignal)
                                                       requetePorteBPAUTRE,
                                                       requetePorteGB);
 
-    		if (prio!=0){
+    		if (prio!=0)
+            {
 
     			// Reservation de la memoire pour les requêtes afin d'effacer
     			// la requête de la mémoire
     			while(semop(semGene,&reserverRequete,1)==-1 && errno==EINTR);
 
 
-    			Requete *reqASuppr = (Requete *) shmat(memIDRequete, NULL, 0) ;
+    			Requete *reqASuppr = (Requete *) shmat(memIDRequete, NULL, 0);
                 // On efface la requete de la memoire
     			reqASuppr->requetes[prio-1] = {AUCUN, 0,0};
     			shmdt(reqASuppr);
@@ -328,7 +328,8 @@ void PorteSortie( int pmemIDNbPlace,
 		unsigned int numeroPlace;
 
 		// Lecture sur le canal du numero de la place
-		while(msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,0) == -1);
+		while
+          (msgrcv(balSortie,&numeroPlace,sizeof(unsigned int),0,0) == -1);
 
 		// p Operation --> Reservation sur MP NbPlace
 		struct sembuf reserverNb = {MutexMPNbPlaces, -1,0};
@@ -337,7 +338,8 @@ void PorteSortie( int pmemIDNbPlace,
 		// Modifier le nombre de place occupées (décrémentation)
 		// Réservation de la mémoire pour le nb de places occupées
 		while(semop(semGene,&reserverNb,1)==-1 && errno==EINTR);
-		NbPlaceOccupees* nbp = (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
+		NbPlaceOccupees* nbp =
+                            (NbPlaceOccupees*) shmat(memIDNbPlace,NULL,0);
 		unsigned int nbPlaceOccupee = nbp->nb;
 		shmdt(nbp);
 		// Libération de la mémoire NbPlace
