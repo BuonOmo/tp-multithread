@@ -150,7 +150,6 @@ static void MoteurPorteEntree()
 		}
 		voituriersEnEntree.insert(make_pair(voiturierEntree, &voiture));
 
-
 		// sleep 1s
 		sleep(TEMPO);
 
@@ -198,22 +197,29 @@ static void ReceptionMortVoiturier(int noSignal)
 
 		int status;
 		// Recuperer le fils qui a envoye le SIGCHLD
-		pid_t filsFini = wait(&status);
+		pid_t filsFini;
+		// Recuperer le fils qui a envoye le SIGCHLD
+		while((filsFini = waitpid(-1, &status, 0)) == -1);
+		int numPlace = 0;
+		if (WIFEXITED(status))
+		{
+			numPlace = WEXITSTATUS(status);
+		}
 
 		map<pid_t, Voiture*>::iterator itEntree;
 		itEntree = voituriersEnEntree.find(filsFini);
 
 		// Recuperer la bonne voiture qui a lancé le signal
-		Voiture v = *(itEntree->second);
+		Voiture *v = itEntree->second;
 
 		// Ficher ses caractéristiques dans l'endroit indique
-		AfficherPlace(WEXITSTATUS(status),v.usagerVoiture,v.numPlaque,v.hArrivee);
+		AfficherPlace(numPlace,v->usagerVoiture,v->numPlaque,v->hArrivee);
 
 		// Reservation de la memoire
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
 		// Ecrire la voiture sur la mémoire partagée
 		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
-		et->places[WEXITSTATUS(status)-1] = v;
+		et->places[numPlace-1] = v;
 		shmdt(et);
 
 		// Liberation de la memoire
