@@ -34,12 +34,12 @@ const int TEMPO = 1;
 struct Voiture {
 	TypeUsager usagerVoiture;
 	int numPlaque;
-	time_t hArrivee;	
+	time_t hArrivee;
 };
 typedef struct Voiture Voiture;
 
 struct Requete {
-	Voiture requetes[NB_BARRIERES_ENTREE]; 
+	Voiture requetes[NB_BARRIERES_ENTREE];
 };
 
 typedef struct Requete Requete;

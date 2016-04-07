@@ -251,8 +251,10 @@ static void ReceptionMortVoiturier(int noSignal)
 
 		// Liberation de la memoire Requete
 		semop(semGene,&libererRequete,1);
-
-		Afficher(MESSAGE, "NumPlace : " numPlace);
+        string debug;
+        debug.append("NumPlace : ");
+        debug+= numPlace;
+		Afficher(MESSAGE, debug.c_str());
 		sleep(2);
 
 		EffacerPlace(numPlace);

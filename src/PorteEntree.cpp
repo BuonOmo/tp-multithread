@@ -219,7 +219,7 @@ static void ReceptionMortVoiturier(int noSignal)
 		while(semop(semGene,&reserverEtat,1)==-1 && errno==EINTR);
 		// Ecrire la voiture sur la mémoire partagée
 		Etat *et = (Etat *) shmat(memIDEtat, NULL, 0);
-		et->places[numPlace-1] = v;
+		et->places[numPlace-1] = *v;
 		shmdt(et);
 
 		// Liberation de la memoire
