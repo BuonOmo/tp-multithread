@@ -27,7 +27,7 @@
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
-const char* CHEMIN = "./parking";
+const char* CHEMIN = "./Parking";
 
 //---------------------------------------------------- Variables statiques
 static pid_t clavier;
@@ -96,9 +96,8 @@ void Initialisation ()
 	/** Création des MP **/
 
 	//Initialisation de la memoire partagee NbPlaceOccupees
-	mpNbPlace =
-			shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT);
-	if ( mpNbPlace == -1)
+
+	if ( (mpNbPlace = shmget(cleMPNbPlace,sizeof(NbPlaceOccupees), 0666|IPC_CREAT)) == -1)
 	{
 		#ifdef MAP
 			AFFICHER(MESSAGE,"Erreur pour MP nbPlace");
@@ -131,8 +130,8 @@ void Initialisation ()
 	}
 
 	//Initialisation de la memoire partagee Requete
-	mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT);
-	if ( mpRequete == -1)
+
+	if ( (mpRequete = shmget(cleMPRequete,sizeof(Requete), 0666|IPC_CREAT)) == -1)
 	{
 		#ifdef MAP
 			AFFICHER(MESSAGE,"Erreur pour MP Requete");

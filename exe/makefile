@@ -17,7 +17,7 @@ INCPATH  = #-I
 #LIBS     = ../lib/libtp.a -ltcl -lncurse
 
 ECHO  = @echo
-EXE   = parking
+EXE   = Parking
 CLEAN = clean
 #.SILENT:
 .PHONY: $(CLEAN)
